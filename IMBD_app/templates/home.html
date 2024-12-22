@@ -1,0 +1,44 @@
+{% extends 'base.html' %} 
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block title %} Homepage {% endblock %}
+    </head>
+    <body>
+        {% block content%}
+        {% comment %} 
+        Filmliste
+        sortierfunktion
+        filme klickbar 
+        {% endcomment %}
+
+        <h1> IMBD </h1>
+
+        <h2> Angesagte Filme: </h2>
+        <p> Filme in 3erreihen anzeigen in grid layout</p>
+        <p> (den kram da unten ignorieren) </p>
+
+
+        <div class="v1_4">
+            <span class="v1_6">CineDB</span>
+            <div class="name"></div>
+            <div class="name"></div>
+            <div class="name"></div>
+            <div class="name"></div>
+            <div class="name"></div>
+            <div class="name"></div>
+            </span><span class="v18_50">Titel -- Jahr
+            </span><span class="v18_51">Titel -- Jahr
+            </span><span class="v18_52">Titel -- Jahr
+            </span><span class="v18_53">Titel -- Jahr
+            </span><span class="v18_54">Titel -- Jahr
+            </span><span class="v18_55">Titel -- Jahr
+            </span><div class="name"></div>
+        <div class="name"></div>
+        <div class="v36_96"></div>
+        <span class="v36_98">Sort by...</span>
+        <div class="v36_99"></div>
+        </div>  
+        {% endblock content%}
+    </body>
+</html>
