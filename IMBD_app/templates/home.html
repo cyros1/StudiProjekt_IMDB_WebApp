@@ -37,17 +37,17 @@
     <!-- Top Bar -->
     <div id="top-bar" class="top-bar fixed top-0 left-0 w-full bg-white shadow-md flex items-center justify-between px-6 py-3 h-14 hidden-top-bar">
         <div class="top-bar-logo flex items-center">
-            <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-40 pointer-events-none" id="top-bar-logo">
+            <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="min-h-28 sm:h-32 md:h-36 lg:h-40 xl:h-52 pointer-events-none" id="top-bar-logo">
         </div>
         <div class="top-bar-search hidden" id="top-bar-search">
-            <input type="text" placeholder="Search..." class="px-4 py-2 text-sm rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-80">
+            <input type="text" placeholder="Search..." class="px-4 py-2 text-sm rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-32 max-w-80">
         </div>
     </div>
 
     <!-- Content that will appear after scrolling (categories, etc.) -->
     <main class="content px-8 py-6">
         <section class="category mb-10">
-            <h2 class="text-2xl font-bold mb-4"><a href="{% url 'IMBD_app:film' %}" >Top Movies</a></h2>
+            <h2 class="text-2xl font-bold mb-4">Top Movies</h2>
             <div class="cards">
                 <div class="card">Movie 1</div>
                 <div class="card">Movie 1</div>
