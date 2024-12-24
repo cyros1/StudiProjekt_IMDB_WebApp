@@ -1,44 +1,101 @@
-{% extends 'base.html' %} 
-<!DOCTYPE html>
-<html>
-    <head>
-        {% block title %} Homepage {% endblock %}
-    </head>
-    <body>
-        {% block content%}
-        {% comment %} 
-        Filmliste
-        sortierfunktion
-        filme klickbar 
-        {% endcomment %}
+{% extends 'base.html' %}
 
-        <h1> IMBD </h1>
+{% block title %}Homepage{% endblock %}
 
-        <h2> Angesagte Filme: </h2>
-        <p> Filme in 3erreihen anzeigen in grid layout</p>
-        <p> (den kram da unten ignorieren) </p>
+{% load static %}
 
+{% block main %}
+<link rel="stylesheet" href="{% static 'output.css' %}">
 
-        <div class="v1_4">
-            <span class="v1_6">CineDB</span>
-            <div class="name"></div>
-            <div class="name"></div>
-            <div class="name"></div>
-            <div class="name"></div>
-            <div class="name"></div>
-            <div class="name"></div>
-            </span><span class="v18_50">Titel -- Jahr
-            </span><span class="v18_51">Titel -- Jahr
-            </span><span class="v18_52">Titel -- Jahr
-            </span><span class="v18_53">Titel -- Jahr
-            </span><span class="v18_54">Titel -- Jahr
-            </span><span class="v18_55">Titel -- Jahr
-            </span><div class="name"></div>
-        <div class="name"></div>
-        <div class="v36_96"></div>
-        <span class="v36_98">Sort by...</span>
-        <div class="v36_99"></div>
-        </div>  
-        {% endblock content%}
-    </body>
-</html>
+<style>
+    .hidden-top-bar {
+        transform: translateY(-100%);
+        transition: transform 0.3s ease;
+    }
+    .visible-top-bar {
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+    }
+</style>
+
+<body class="bg-gray-100">
+    <!-- Initial full-screen container -->
+    <header class="landing-page flex flex-col items-center justify-center h-screen bg-gray-200">
+        <div class="landing-page flex flex-col items-center justify-center min-h-screen">
+            <!-- Logo (initially centered) -->
+            <div id="logo" class="logo-container mb-4 transition-all duration-500 ease-in-out">
+                <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-60">
+            </div>
+    
+            <!-- Search Bar -->
+            <div id="search-bar" class="search-bar-container transition-all duration-500 ease-in-out">
+                <input type="text" placeholder="Search..." class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+    </header>
+
+    <!-- Top Bar -->
+    <div id="top-bar" class="top-bar fixed top-0 left-0 w-full bg-white shadow-md flex items-center justify-between px-6 py-3 h-14 hidden-top-bar">
+        <div class="top-bar-logo flex items-center">
+            <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-40 pointer-events-none" id="top-bar-logo">
+        </div>
+        <div class="top-bar-search hidden" id="top-bar-search">
+            <input type="text" placeholder="Search..." class="px-4 py-2 text-sm rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-80">
+        </div>
+    </div>
+
+    <!-- Content that will appear after scrolling (categories, etc.) -->
+    <main class="content px-8 py-6">
+        <section class="category mb-10">
+            <h2 class="text-2xl font-bold mb-4"><a href="{% url 'IMBD_app:film' %}" >Top Movies</a></h2>
+            <div class="cards">
+                <div class="card">Movie 1</div>
+                <div class="card">Movie 1</div>
+                <div class="card">Movie 1</div>
+                <div class="card">Movie 1</div>
+                <div class="card">Movie 1</div>
+            </div>
+        </section>
+        <!-- Add more sections as needed -->
+        <section class="category mb-10">
+            <h2 class="text-2xl font-bold mb-4">Top Regisseur</h2>
+            <div class="cards">
+                <div class="card">Regisseur 1</div>
+                <div class="card">Regisseur 1</div>
+                <div class="card">Regisseur 1</div>
+                <div class="card">Regisseur 1</div>
+                <div class="card">Regisseur 1</div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const topBar = document.getElementById('top-bar');
+        const logo = document.getElementById('logo');
+        const topBarLogo = document.getElementById('top-bar-logo');
+        const searchBar = document.getElementById('search-bar');
+        const topBarSearch = document.getElementById('top-bar-search');
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+
+            // Toggle top bar visibility
+            if (scrollY > 200) { // Adjust scroll threshold as needed
+                topBar.classList.remove('hidden-top-bar');
+                topBar.classList.add('visible-top-bar');
+                topBarSearch.classList.remove('hidden');
+            } else {
+                topBar.classList.remove('visible-top-bar');
+                topBar.classList.add('hidden-top-bar');
+                topBarSearch.classList.add('hidden');
+            }
+
+            // Shrink logo and move search bar to the top bar
+            const logoScale = Math.max(0.5, 1 - scrollY / 500); // Adjust scale factor as needed
+            logo.style.transform = `scale(${logoScale})`;
+            searchBar.style.opacity = `${Math.max(0, 1 - scrollY / 100)}`; // Fade out search bar
+        });
+    </script>
+</body>
+
+{% endblock main %}

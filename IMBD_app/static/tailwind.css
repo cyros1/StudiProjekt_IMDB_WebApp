@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .cards {
+        display: flex;
+        overflow-x: scroll;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        gap: 10px; /* Optional for spacing between cards */
+    }
+    
+    .card {
+        flex: 0 0 auto; /* Ensures the card does not shrink or grow unexpectedly */
+        scroll-snap-align: start;
+        align-items: center;
+        justify-content: center;
+        width: 300px;
+        height: 150px;
+        background-color: #f1f1f1;
+        border-radius: 8px;
+        border: 0.7px solid #eee;
+    }
+    
+}

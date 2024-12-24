@@ -1,15 +1,11 @@
 {% extends 'base.html' %}
-{% load static %}
 
-<!DOCTYPE html>
-<html>
-    <head>
-        {% block title %}Regisseur{% endblock %}
-        <!-- diese css datei wird nicht gefunden, frag gott wieso nicht -->
-        <link href="{% static 'person_layout.css' %}" rel="stylesheet">
-    </head>
 
-    {% block content %}
+        {% load static %}
+        <link href="{% static './person_layout.css' %}" rel="stylesheet">
+        {% block title %} Regisseur {% endblock title %}
+
+    {% block main %}
     <div class="regisseur-container">
         <h1>Regisseur Name</h1>
         
@@ -31,5 +27,4 @@
             <div class="film-item">Film 4</div>
         </div>
     </div>
-    {% endblock %}
-</html>
+    {% endblock main %}
