@@ -7,71 +7,96 @@
 
 
         <title> {% block title %} {% endblock title %} </title>
+
+        <style>
+        .top-bar-logo img {
+        height: 150px; /* Set a fixed height */
+        width: auto; /* Maintain aspect ratio */
+        }
+
+        </style>
+        
     </head>
     <body>
         <main class="spaced-content">
+
+            <!-- Top Bar -->
+        <div id="top-bar" 
+        class="top-bar z-10 fixed top-0 left-0 w-full bg-white shadow-md grid grid-cols-3 grid-rows-1 items-center h-14 hidden-top-bar">
+        <!-- Logo Section -->
+        <div class="top-bar-logo flex justify-start items-center px-4 col-start-1 col-end-2">
+        <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-10 pointer-events-none" id="top-bar-logo">
+        </div>
+
+        <!-- Search Bar Section -->
+        <div class="top-bar-search justify-self-center hidden" id="top-bar-search">
+        <input type="text" 
+                placeholder="Search..." 
+                class="px-4 py-2 text-sm rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-xs">
+        </div>
+
+        <!-- Menu Button Section -->
+        <div class="flex justify-end items-center px-4 col-start-3 col-end-4">
+        <button type="button" 
+                class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" 
+                id="menu-button" aria-expanded="false" aria-haspopup="false">
+            Categories
+            <svg class="-mr-1 size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" 
+                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" 
+                        clip-rule="evenodd" />
+            </svg>
+        </button>
+        </div>
+        </div>
+
             {% block main %}
             {% endblock main %}
         </main>
-        <!-- Top Bar -->
-        <div id="top-bar" class="top-bar fixed top-0 left-0 w-full bg-white shadow-md flex items-center justify-between px-6 py-3 h-14 hidden-top-bar">
-        <div class="top-bar-logo flex items-center">
-            <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="min-h-28 sm:h-32 md:h-36 lg:h-40 xl:h-52 pointer-events-none" id="top-bar-logo">
-        </div>
-        <div class="top-bar-search " id="top-bar-search">
-            <input type="text" placeholder="Search..." class="px-4 py-2 text-sm rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-32 max-w-80">
-        </div>
-        <div>
-            <button type="button" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button" aria-expanded="false" aria-haspopup="false">
-            Menu
-            <svg class="-mr-1 size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-            </svg>
-            </button>
-        </div>
-        </div>
-            <!--
-            src: https://tailwindui.com/components/application-ui/elements/dropdowns
-            Dropdown menu, show/hide based on menu state.
         
-            Entering: "transition ease-out duration-100"
-                From: "transform opacity-0 scale-95"
-                To: "transform opacity-100 scale-100"
-            Leaving: "transition ease-in duration-75"
-                From: "transform opacity-100 scale-100"
-                To: "transform opacity-0 scale-95"
-            -->
-            <div id="dropdown" class="absolute right-0 z-10 mt-2 inset-y-11 w-full origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-            <div class="py-1" role="none">
-                <!-- Active: "bg-gray-100 text-gray-900 outline-none", Not Active: "text-gray-700" -->
-                <h3 class="text-lg font-semibold">Movies</h3>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Top Movies</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-1">Most Recent Movies</a>
+        <div 
+        id="fullscreen-overlay" 
+        class="fixed inset-0 z-50 bg-white hidden">
+        <!-- Close Button -->
+        <button 
+            type="button" 
+            class="absolute top-4 right-4 text-gray-500 hover:text-gray-900" 
+            id="close-overlay">
+            Close
+        </button>
+    
+        <!-- Categories Content -->
+            <div class="flex flex-col items-center justify-center h-full px-4">
+                <h2 class="text-3xl font-bold mb-6">Categories</h2>
+                <ul class="space-y-4">
+                    <li><a href="#" class="text-lg text-blue-600 hover:underline">Top Movies</a></li>
+                    <li><a href="#" class="text-lg text-blue-600 hover:underline">Most Recent Movies</a></li>
+                    <li><a href="#" class="text-lg text-blue-600 hover:underline">Popular Celebrities</a></li>
+                </ul>
             </div>
-            <div class="py-1" role="none">
-                <h3 class="text-lg font-semibold">Movies</h3>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2">Most Popular Celebs</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-3">xx</a>
-            </div>
-            <div class="py-1" role="none">
-                <h3 class="text-lg font-semibold">Movies</h3>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-4">xx</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-5">xx</a>
-            </div>
-            <div class="py-1" role="none">
-                <h3 class="text-lg font-semibold">Movies</h3>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-6">xx</a>
-            </div>
-            </div>
+        </div>
 
             <script>
-                // JavaScript to toggle dropdown visibility
-                const dropdownButton = document.getElementById('menu-button');
-                const dropdownMenu = document.getElementById('dropdown');
-                
-                dropdownButton.addEventListener('click', () => {
-                    // Toggle visibility of dropdown menu
-                    dropdownMenu.classList.toggle('hidden');
+                const menuButton = document.getElementById('menu-button');
+                const fullscreenOverlay = document.getElementById('fullscreen-overlay');
+                const closeOverlay = document.getElementById('close-overlay');
+
+                // Open the fullscreen overlay when the dropdown is clicked
+                menuButton.addEventListener('click', () => {
+                    fullscreenOverlay.classList.remove('hidden');
+                    fullscreenOverlay.classList.add('fullscreen-overlay-active');
+                    topBar.classList.remove('visible-top-bar');
+                    topBar.classList.add('hidden-top-bar');
+                    topBarSearch.classList.add('hidden');
+                });
+
+                // Close the fullscreen overlay when the close button is clicked
+                closeOverlay.addEventListener('click', () => {
+                    fullscreenOverlay.classList.add('hidden');
+                    fullscreenOverlay.classList.remove('fullscreen-overlay-active');
+                    topBar.classList.remove('hidden-top-bar');
+                    topBar.classList.add('visible-top-bar');
+                    topBarSearch.classList.remove('hidden');
                 });
             </script>
         
@@ -80,11 +105,9 @@
             <p>© 2024 IMBD - All Rights Reserved</p>
         </footer>
 
-
-
-
         {% comment %} 
-        TODO: das hier ist nur damit man das alles erstmal sieht, kannst du wegmachen
+        TODO: kann man wegmachen wieder, nur damit man content der seite sieht,
+        der eig unter dem top nav bar wäre
          {% endcomment %}
         <style>
             .spaced-content {
