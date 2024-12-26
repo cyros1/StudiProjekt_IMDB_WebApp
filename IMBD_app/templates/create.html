@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Add Entity{% endblock %}
+
+{% block main %}
+    <h1>Add stuff here:</h1>
+    
+    <select id="entitySelect">
+        <option value="">-- Choose an Entity to add --</option>
+        <option value="Actor">Actor</option>
+        <option value="Director">Director</option>
+        <option value="Movie">Movie</option>
+    </select>
+
+    {% comment %} einzelne optionen etwas voneinander trennen, platz geben {% endcomment %}
+    <div id="actorForm" class="entityForm" style="display: none;">
+        <br>
+        <h2>Actor Form</h2>
+        <label for="actorName">Name: </label>
+        <input type="text" id="actorName" name="actorName">
+        <br>
+        <label for="actorSurname">Surname: </label>
+        <input type="text" id="actorSurname" name="actorSurname">
+        <br>
+        <label for="actorDob">Date of Birth: </label>
+        <input type="date" id="actorDob" name="actorDob">
+        <br>
+        <label for="actorBio">Biography: </label>
+        <textarea id="actorBio" name="actorBio"></textarea>
+    </div>
+
+    <div id="directorForm" class="entityForm" style="display: none;">
+        <br>
+        <h2>Director Form</h2>
+        <label for="directorName">Name: </label>
+        <input type="text" id="directorName" name="directorName">
+        <br>
+        <label for="directorSurname">Surname: </label>
+        <input type="text" id="directorSurname" name="directorSurname">
+        <br>
+        <label for="directorDob">Date of Birth: </label>
+        <input type="date" id="directorDob" name="directorDob">
+        <br>
+        <label for="directorBio">Biography: </label>
+        <textarea id="directorBio" name="directorBio"></textarea>
+    </div>
+
+    <div id="movieForm" class="entityForm" style="display: none;">
+        <br>
+        <h2>Movie Form</h2>
+        <label for="movieTitle">Title: </label>
+        <input type="text" id="movieTitle" name="movieTitle">
+        <br>
+        <label for="movieYear">Year: </label>
+        <input type="date" id="movieYear" name="movieYear">
+        <br>
+        <label for="movieGenre">Genre: </label>
+        <input type="text" id="movieGenre" name="movieGenre">
+        <br>
+        <label for="movieDescription">Description: </label>
+        <textarea id="movieDescription" name="movieDescription"></textarea>
+        <br>
+        <label for="movieTitle">Actors: </label>
+                {% comment %} 
+                TODO: Mit Actors verbinden, maybe ankreuzen oder so, aus ner liste? mit suchfunktion??? alphabetisch sortiert {% endcomment %}
+        <br>
+        <label for="movieDirector">Director: </label>
+                {% comment %} 
+                TODO: Mit Director verbinden, maybe ankreuzen oder so, aus ner liste? mit suchfunktion??? alphabetisch sortiert {% endcomment %}
+    </div>
+
+    <script>
+        document.getElementById('entitySelect').addEventListener('change', function () {
+            var selectedValue = this.value;
+            
+            // Alle Formulare ausblenden
+            var forms = document.querySelectorAll('.entityForm');
+            forms.forEach(function (form) {
+                form.style.display = 'none';
+            });
+
+            // Das Formular für die gewählte Entität anzeigen
+            if (selectedValue) {
+                document.getElementById(selectedValue.toLowerCase() + 'Form').style.display = 'block';
+            }
+        });
+    </script>
+
+
+{% comment %} 
+TODO: Models Clientseitig mit Backend verbinden, sodass daten gespeichert werden
+        Bild hinzufügen können 
+        Iwie sodass man schauspieler  hinzufügen kann (und regisseure)
+        Submit Knopf zum Abschicken
+        {% endcomment %}
+        
+
+{% endblock %}

@@ -6,9 +6,10 @@ app_name = 'IMBD_app'
 
 urlpatterns=[
     path("", views.home, name="home"),
-    path("film/", views.film, name="film"),
-    path("schauspieler/", views.schauspieler, name="schauspieler"),
-    path("regisseur/", views.regisseur, name="regisseur"),
+    path("movie/", views.movie, name="movie"),
+    path("actor/", views.actor, name="actor"),
+    path("director/", views.director, name="director"),
+    path("create/", views.create, name="create"),
 ]
 # nach der url einfach / film, schauspieler whatever eingeben um daraufzukommen
 

@@ -1,18 +1,22 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .forms import ActorForm, DirectorForm, MovieForm
 
 # Create your views here.
 
 def home(request):
     return render(request, "home.html")
 
-def film(request):
-    return render(request, "film.html")
+def movie(request):
+    return render(request, "movie.html")
 
-def schauspieler(request):
-    return render(request, "schauspieler.html")
+def actor(request):
+    return render(request, "actor.html")
 
-def regisseur(request):
-    return render(request, "regisseur.html")
+def director(request):
+    return render(request, "director.html")
+
+def create(request):
+    return render(request, 'create.html')
 
 
 # film : Titel, Veröffentlichungsdatum, Genre, Beschreibung
