@@ -22,17 +22,17 @@
 
             <!-- Top Bar -->
         <div id="top-bar" 
-        class="top-bar z-10 fixed top-0 left-0 w-full bg-white shadow-md grid grid-cols-3 grid-rows-1 items-center h-14 hidden-top-bar">
+        class="top-bar z-10 fixed top-0 left-0 w-full bg-gradient-to-r from-dark-purple to-light-pink shadow-md grid grid-cols-3 grid-rows-1 items-center h-20 hidden-top-bar border-b">
         <!-- Logo Section -->
         <div class="top-bar-logo flex justify-start items-center px-4 col-start-1 col-end-2">
         <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-10 pointer-events-none" id="top-bar-logo">
         </div>
 
         <!-- Search Bar Section -->
-        <div class="top-bar-search justify-self-center hidden" id="top-bar-search">
+        <div class="top-bar-search justify-self-center" id="top-bar-search">
         <input type="text" 
                 placeholder="Search..." 
-                class="px-4 py-2 text-sm rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-xs">
+                class="px-4 py-2 text-sm rounded-full border-2 border-search-bar-pink focus:outline-none focus:border-search-bar-purple w-96 max-w-lg">
         </div>
 
         <!-- Menu Button Section -->
@@ -49,7 +49,7 @@
         </button>
         </div>
         </div>
-
+        
             {% block main %}
             {% endblock main %}
         </main>
@@ -108,7 +108,7 @@
         {% comment %} 
         TODO: kann man wegmachen wieder, nur damit man content der seite sieht,
         der eig unter dem top nav bar wäre
-         {% endcomment %}
+        {% endcomment %}
         <style>
             .spaced-content {
                 margin-top: 60px;
