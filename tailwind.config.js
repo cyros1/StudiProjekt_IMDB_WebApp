@@ -10,7 +10,7 @@ module.exports = {
           "dark-purple": "#4E299B",
           "light-pink": "#DF99D8",
           "search-bar-pink": "#c686ce",
-          "search-bar-purple": "#7245aa"
+          "search-bar-purple": "#7245aa",
         },
       },
   },
