@@ -15,9 +15,63 @@ def actor(request):
 def director(request):
     return render(request, "director.html")
 
-def create(request):
-    return render(request, 'create.html')
 
+def create(request):
+    # Erstelle eine Instanz des ActorForm
+    actor_form = ActorForm()
+
+    if request.method == 'POST':
+        # Wenn das Formular übermittelt wird
+        actor_form = ActorForm(request.POST, request.FILES)
+        if actor_form.is_valid():  # Überprüfen, ob das Formular gültig ist
+            actor_form.save()  # Speichern der Actor-Daten
+            return redirect('success.html')  # Umleitung nach dem erfolgreichen Speichern
+
+    return render(request, 'create.html', {
+        'actor_form': actor_form,
+    })
+
+# def create(request):
+    # Initialisiere die Formulare standardmäßig
+    actor_form = ActorForm()
+    director_form = DirectorForm()
+    movie_form = MovieForm()
+
+    if request.method == 'POST':
+        # Prüfe, welches Formular gesendet wurde
+        if 'actorName' in request.POST:
+            actor_form = ActorForm(request.POST, request.FILES)
+            if actor_form.is_valid():
+                actor_form.save()
+                print("Actor wurde gespeichert!")
+                return redirect('success.html')  # Erfolgsseite
+            else:
+                print("Formular ist ungültig!")
+                print(actor_form.errors)
+        elif 'directorName' in request.POST:
+            director_form = DirectorForm(request.POST, request.FILES)
+            if director_form.is_valid():
+                director_form.save()
+                return redirect('success.html')  # Erfolgsseite
+        elif 'movieTitle' in request.POST:
+            movie_form = MovieForm(request.POST, request.FILES)
+            if movie_form.is_valid():
+                movie_form.save()
+                print("Actor wurde gespeichert!")
+                return redirect('success.html')  # Erfolgsseite
+            else:
+                print("Formular ist ungültig!")
+                print(actor_form.errors)
+
+    # Render das Template mit allen Formularen
+    return render(request, 'create.html', {
+        'actor_form': actor_form,
+        'director_form': director_form,
+        'movie_form': movie_form,
+    })
+
+def success(request):
+    return render(request, "success.html")
 
 # film : Titel, Veröffentlichungsdatum, Genre, Beschreibung
 # Schauspieler : Vor- & Nachname, Geburtsdatum, Biografie

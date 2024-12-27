@@ -23,23 +23,30 @@
     </select>
 
     {% comment %} einzelne optionen etwas voneinander trennen, platz geben {% endcomment %}
+    
     <div id="actorForm" class="entityForm" style="display: none;">
-        <br>
-        <h2>Actor Form</h2>
-        <label for="actorName">Name: </label>
-        <input type="text" id="actorName" name="actorName">
-        <br>
-        <label for="actorSurname">Surname: </label>
-        <input type="text" id="actorSurname" name="actorSurname">
-        <br>
-        <label for="actorDob">Date of Birth: </label>
-        <input type="date" id="actorDob" name="actorDob">
-        <br>
-        <label for="actorBio">Biography: </label>
-        <textarea id="actorBio" name="actorBio"></textarea>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ actor_form.as_p }}
+    
+            {% if actor_form.errors %}
+                <div class="errorlist">
+                    {% for field in actor_form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <button type="submit">Submit</button>
+        </form>
     </div>
+    
+    
 
     <div id="directorForm" class="entityForm" style="display: none;">
+        <form>
         <br>
         <h2>Director Form</h2>
         <label for="directorName">Name: </label>
@@ -53,6 +60,13 @@
         <br>
         <label for="directorBio">Biography: </label>
         <textarea id="directorBio" name="directorBio"></textarea>
+        <br>
+        <label for="directorImage">Profile Picture: </label>
+        <input type="file" id="directorImage" name="directorImage" accept="image/*">
+        <br> 
+
+        <button type="submit">Submit</button>
+        </form>
     </div>
 
     <div id="movieForm" class="entityForm" style="display: none;">
@@ -70,6 +84,9 @@
         <label for="movieDescription">Description: </label>
         <textarea id="movieDescription" name="movieDescription"></textarea>
         <br>
+        <label for="movieImage">Movie Poster: </label>
+        <input type="file" id="movieImage" name="movieImage" accept="image/*">
+        <br>
         <label for="movieTitle">Actors: </label>
                 {% comment %} 
                 TODO: Mit Actors verbinden, maybe ankreuzen oder so, aus ner liste? mit suchfunktion??? alphabetisch sortiert {% endcomment %}
@@ -77,6 +94,8 @@
         <label for="movieDirector">Director: </label>
                 {% comment %} 
                 TODO: Mit Director verbinden, maybe ankreuzen oder so, aus ner liste? mit suchfunktion??? alphabetisch sortiert {% endcomment %}
+        <br>
+        <button type="submit">Submit</button>
     </div>
 
     <script>

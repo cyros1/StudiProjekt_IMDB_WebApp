@@ -1,5 +1,5 @@
 from django.contrib import admin
-# from .models import Actor, Director, Movie
+from .models import Actor, Director, Movie
 
 # Register your models here.
 
@@ -8,18 +8,18 @@ from django.contrib import admin
 #     search_fields = ('name', 'surname')
     
 
-# admin.site.register(Actor, ActorAdmin)
+admin.site.register(Actor)
 
-# name, surname, dob, biography
-
-
-# class DirectorAdmin():
-
-# admin.site.register(Director, ActorAdmin)
+#name, surname, dob, biography
 
 
+##class DirectorAdmin():
+
+admin.site.register(Director)
 
 
-# class MovieAdmin():
 
-# admin.site.register(Movie, ActorAdmin)
+
+#class MovieAdmin():
+
+admin.site.register(Movie)
