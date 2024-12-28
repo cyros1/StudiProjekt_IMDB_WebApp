@@ -1,25 +1,11 @@
 from django.contrib import admin
 from .models import Actor, Director, Movie
 
-# Register your models here.
-
-# class ActorAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'surname')
-#     search_fields = ('name', 'surname')
-    
+# Registrierung der jeweiligen Models
+# TODO: Actor Model adden
 
 admin.site.register(Actor)
 
-#name, surname, dob, biography
-
-
-##class DirectorAdmin():
-
 admin.site.register(Director)
-
-
-
-
-#class MovieAdmin():
 
 admin.site.register(Movie)

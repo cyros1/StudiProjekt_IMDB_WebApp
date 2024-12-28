@@ -23,7 +23,7 @@ def create(request):
     movie_form = MovieForm()
 
     if request.method == 'POST':
-        # Formulartyp aus den POST-Daten lesen
+        # Formulartyp aus den POST-Daten lesen, s. create.html
         form_type = request.POST.get('form_type')
 
         if form_type == 'actor':
@@ -56,16 +56,6 @@ def create(request):
 
 def success(request):
     return render(request, "success.html")
-
-# film : Titel, Veröffentlichungsdatum, Genre, Beschreibung
-# Schauspieler : Vor- & Nachname, Geburtsdatum, Biografie
-# Regisseur : Vor- & Nachname, Geburtsdatum, Biografie
-# Bewertung: Film (Foreignkey), Rezensent, Bewertung (1-5 Sterne)
-#            Kommentar, Datum
-
-
-
-
 
 
 # daten in views übergeben

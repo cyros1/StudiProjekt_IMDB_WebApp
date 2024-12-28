@@ -34,15 +34,15 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
+# Rating maybe erst auf Filmseite anzeigen lassen, Kommentarspalte
+# Durchschnittsrating weiter oben anzeigen lassen
 class Rating(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.DO_NOTHING, default=1)    
-    # gehört zum jeweiligen film dazu, wenn rating gelöscht wird, bleibt film am leben
-    # rating = models.SmallIntegerField(default=1) # 0-5 steren
+        # gehört zum jeweiligen Film dazu, wenn rating gelöscht wird, bleibt Movie am leben
+    # rating = models.SmallIntegerField(default=1) # 0-5 sterne
     # rezensent (pseudonym)
     comment = models.CharField(max_length=500) # Kommentar des Nutzers
     created_at = models.DateTimeField(auto_now_add=True) # Datum
 
     def __str__(self):
         return self.movie + "-rating"  #idk ob das funktioniert, wird noch getestet
-
-# CASCADE = bei löschung werden auch alle referenzierten obj auch gelöscht

@@ -14,5 +14,5 @@ urlpatterns=[
     path("create/", views.create, name="create"),
     path("success/", views.success, name="success"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-# nach der url einfach / film, schauspieler whatever eingeben um daraufzukommen
+    # static geadded, damit Bilder hinzugefügt werden können in /create
 

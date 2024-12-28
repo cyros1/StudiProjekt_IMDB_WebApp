@@ -21,6 +21,7 @@
             <form method="POST" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
                 <input type="hidden" name="form_type" value="actor">
+                    <!-- form_type variable ist actor, s. views.create -->
                 {{ actor_form.as_p }}
                 
                 {% if actor_form.errors %}
@@ -32,7 +33,7 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-                
+                    <!-- Mögliche Errors werden aufgelistet, wenn welche auftreten -->
                 <button type="submit" class="w-full bg-submit-button hover:bg-hover-button text-text-white font-semibold py-3 rounded-lg">Submit</button>
             </form>
         </div>
