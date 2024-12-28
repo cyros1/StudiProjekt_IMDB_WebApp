@@ -20,7 +20,7 @@
         width: 20rem; 
         height: 30rem; 
         /* background-image: linear-gradient(to bottom right, #206E82, #9DD7E0);  */
-        background-color: #3E1651;
+        background-color: #2D1E35;
         border-radius: 1.5rem; 
         color: #d4d4d8; 
         padding: 1.5rem; 
@@ -41,6 +41,7 @@
         line-height: 1rem;
         width:100%;
         margin-bottom: .5rem;
+        color: "#DDD1DD";
     }
 
     .card-description {
@@ -49,13 +50,15 @@
         height: 1.5rem;
         overflow:hidden;
         margin-bottom: 1rem;
+        color: "#DDD1DD";
     }
 
     .card-button {
         height: 3rem;
         overflow:hidden;
         align-self: left;
-        background-color: black; 
+        background-color: #5F3C71;
+        color: #DDD1DD; 
         font-weight: 800; 
         padding: 0.5rem 1.5rem; 
         border-radius: 0.5rem;
@@ -65,7 +68,7 @@
     }
 
     .card-button:hover {
-        background-color: #0284c7; 
+        background-color: #7A4D94; 
     }
 }
 
