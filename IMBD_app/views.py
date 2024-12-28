@@ -17,53 +17,37 @@ def director(request):
 
 
 def create(request):
-    # Erstelle eine Instanz des ActorForm
-    actor_form = ActorForm()
-
-    if request.method == 'POST':
-        # Wenn das Formular übermittelt wird
-        actor_form = ActorForm(request.POST, request.FILES)
-        if actor_form.is_valid():  # Überprüfen, ob das Formular gültig ist
-            actor_form.save()  # Speichern der Actor-Daten
-            return redirect('success.html')  # Umleitung nach dem erfolgreichen Speichern
-
-    return render(request, 'create.html', {
-        'actor_form': actor_form,
-    })
-
-# def create(request):
-    # Initialisiere die Formulare standardmäßig
+    # Standardformulare initialisieren
     actor_form = ActorForm()
     director_form = DirectorForm()
     movie_form = MovieForm()
 
     if request.method == 'POST':
-        # Prüfe, welches Formular gesendet wurde
-        if 'actorName' in request.POST:
+        # Formulartyp aus den POST-Daten lesen
+        form_type = request.POST.get('form_type')
+
+        if form_type == 'actor':
             actor_form = ActorForm(request.POST, request.FILES)
             if actor_form.is_valid():
                 actor_form.save()
-                print("Actor wurde gespeichert!")
-                return redirect('success.html')  # Erfolgsseite
+                return render(request, 'success.html')  # Erfolgsseite
             else:
-                print("Formular ist ungültig!")
-                print(actor_form.errors)
-        elif 'directorName' in request.POST:
+                print("ERROR: Actor couldnt be created")
+        elif form_type == 'director':
             director_form = DirectorForm(request.POST, request.FILES)
             if director_form.is_valid():
                 director_form.save()
-                return redirect('success.html')  # Erfolgsseite
-        elif 'movieTitle' in request.POST:
+                return render(request, 'success.html')  # Erfolgsseite
+            else:
+                print("ERROR: Director couldnt be created")
+        elif form_type == 'movie':
             movie_form = MovieForm(request.POST, request.FILES)
             if movie_form.is_valid():
                 movie_form.save()
-                print("Actor wurde gespeichert!")
-                return redirect('success.html')  # Erfolgsseite
+                return render(request, 'success.html')  # Erfolgsseite
             else:
-                print("Formular ist ungültig!")
-                print(actor_form.errors)
-
-    # Render das Template mit allen Formularen
+                print("ERROR: Movie couldnt be created")
+            
     return render(request, 'create.html', {
         'actor_form': actor_form,
         'director_form': director_form,
@@ -82,14 +66,7 @@ def success(request):
 
 
 
-# anzeigen lassen beispiel
-# {% for film in filme %}
-# <div>
-#     <h2>{{ film.titel }}</h2>
-#     <p>Genre: {{ film.genre }}</p>
-#     <p>Veröffentlicht am: {{ film.veroeffentlichungsdatum }}</p>
-# </div>
-# {% endfor %}
+
 
 # daten in views übergeben
 # from .models import Film

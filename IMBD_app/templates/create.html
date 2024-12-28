@@ -20,6 +20,7 @@
         <div id="actorForm" class="entityForm hidden">
             <form method="POST" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
+                <input type="hidden" name="form_type" value="actor">
                 {{ actor_form.as_p }}
                 
                 {% if actor_form.errors %}
@@ -38,23 +39,20 @@
         
         <!-- Director Form -->
         <div id="directorForm" class="entityForm hidden">
-            <form class="space-y-4">
-                <h2 class="text-2xl font-semibold">Director Form</h2>
+            <form method="POST" enctype="multipart/form-data" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="director">
+                {{ director_form.as_p }}
                 
-                <label for="directorName" class="block">Name:</label>
-                <input type="text" id="directorName" name="directorName" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg">
-                
-                <label for="directorSurname" class="block">Surname:</label>
-                <input type="text" id="directorSurname" name="directorSurname" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg">
-                
-                <label for="directorDob" class="block">Date of Birth:</label>
-                <input type="date" id="directorDob" name="directorDob" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg">
-                
-                <label for="directorBio" class="block">Biography:</label>
-                <textarea id="directorBio" name="directorBio" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg"></textarea>
-                
-                <label for="directorImage" class="block">Profile Picture:</label>
-                <input type="file" id="directorImage" name="directorImage" accept="image/*" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg">
+                {% if director_form.errors %}
+                    <div class="errorlist text-red-500 text-sm">
+                        {% for field in director_form %}
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 
                 <button type="submit" class="w-full bg-submit-button hover:bg-hover-button text-text-white font-semibold py-3 rounded-lg">Submit</button>
             </form>
@@ -62,23 +60,20 @@
 
         <!-- Movie Form -->
         <div id="movieForm" class="entityForm hidden">
-            <form class="space-y-4">
-                <h2 class="text-2xl font-semibold">Movie Form</h2>
+            <form method="POST" enctype="multipart/form-data" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="movie">
+                {{ movie_form.as_p }}
                 
-                <label for="movieTitle" class="block">Title:</label>
-                <input type="text" id="movieTitle" name="movieTitle" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg">
-                
-                <label for="movieYear" class="block">Year:</label>
-                <input type="date" id="movieYear" name="movieYear" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg">
-                
-                <label for="movieGenre" class="block">Genre:</label>
-                <input type="text" id="movieGenre" name="movieGenre" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg">
-                
-                <label for="movieDescription" class="block">Description:</label>
-                <textarea id="movieDescription" name="movieDescription" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg"></textarea>
-                
-                <label for="movieImage" class="block">Movie Poster:</label>
-                <input type="file" id="movieImage" name="movieImage" accept="image/*" class="w-full p-3 bg-f-lighter-purple border border-f-border-purple text-text-white rounded-lg">
+                {% if movie_form.errors %}
+                    <div class="errorlist text-red-500 text-sm">
+                        {% for field in movie_form %}
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 
                 <button type="submit" class="w-full bg-submit-button hover:bg-hover-button text-text-white font-semibold py-3 rounded-lg">Submit</button>
             </form>

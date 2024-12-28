@@ -18,7 +18,6 @@ class Director(models.Model):
     date_of_birth = models.DateField()
     biography = models.TextField()
     image = models.ImageField(upload_to='directors/', blank=True, null=True)
-    # movies = models.ManyToManyField(Movie) 
 
     def __str__(self):
         return self.name
@@ -33,17 +32,17 @@ class Movie(models.Model):
     image = models.ImageField(upload_to='movies/', blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.title
 
 class Rating(models.Model):
-    # film (foreignkey)
+    movie = models.ForeignKey(Movie, on_delete=models.DO_NOTHING, default=1)    
+    # gehört zum jeweiligen film dazu, wenn rating gelöscht wird, bleibt film am leben
+    # rating = models.SmallIntegerField(default=1) # 0-5 steren
     # rezensent (pseudonym)
-   #  movie = models.ForeignKey(Movie, on_delete=models.DO_NOTHING, default=1)    # gehört zum jeweiligen film dazu
-   #  rating = models.SmallIntegerField(default=1) # 0-5 steren
     comment = models.CharField(max_length=500) # Kommentar des Nutzers
     created_at = models.DateTimeField(auto_now_add=True) # Datum
 
     def __str__(self):
-        return self.name
+        return self.movie + "-rating"  #idk ob das funktioniert, wird noch getestet
 
 # CASCADE = bei löschung werden auch alle referenzierten obj auch gelöscht

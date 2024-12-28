@@ -87,6 +87,20 @@
         </section>
     </div>
 
+        {% comment %} 
+        {% for movie in Movies %}
+        <div>
+            <h2>{{ movie.title }}</h2>
+            <p>Genre: {{ movie.genre }}</p>
+            <p>Veröffentlicht am: {{ movie.date }}</p>
+        </div>
+        {% endfor %} 
+
+        ich bin so lost
+        
+        {% endcomment %}
+        
+
     <script>
         const topBar = document.getElementById('top-bar');
         const logo = document.getElementById('logo');
