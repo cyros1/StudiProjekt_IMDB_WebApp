@@ -41,11 +41,32 @@
         <section class="category mb-10">
             <h2 class="text-2xl font-bold mb-4">Top Movies</h2>
             <div class="cards">
+                {% for movie in movies %}
+                <div class="card">
+                    <!-- Image -->
+                    <div class="card-image" style="background-image: url('{{ movie.image }}'); background-size: cover; background-position: center;"></div>
+                    <!-- Movie Title + Descr -->
+                    <div>
+                        <p class="card-title">{{ movie.title }}</p>
+                        <p class="card-description">{{ movie.description }}</p>
+                    </div>
+                    <!-- Button to Movie Details -->
+                    <button class="card-button">
+                        <a href="/movies/{{ movie.id }}">Show More</a></button>
+                </div>
+                {% endfor %}
+            </div>
+            
+        </section>
+        <!-- Add more sections as needed -->
+        <section class="category mb-10">
+            <h2 class="text-2xl font-bold mb-4">Top Regisseur</h2>
+            <div class="cards">
                 <div class="card">
                     <div class="card-image"></div>
                     <div>
-                        <p class="card-title">Movie 1</p>
-                        <p class="card-description">DER KRATER</p>
+                        <p class="card-title">Movie 69</p>
+                        <p class="card-description">coole zahlen man</p>
                     </div>
                     <button class="card-button">Show More</button>
                 </div>
@@ -61,9 +82,9 @@
             </div>
             
         </section>
-        <!-- Add more sections as needed -->
+
         <section class="category mb-10">
-            <h2 class="text-2xl font-bold mb-4">Top Regisseur</h2>
+            <h2 class="text-2xl font-bold mb-4">Top Director</h2>
             <div class="cards">
                 <div class="card">
                     <div class="card-image"></div>

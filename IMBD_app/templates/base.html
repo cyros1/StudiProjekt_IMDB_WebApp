@@ -25,7 +25,9 @@
         class="top-bar z-10 fixed top-0 left-0 w-full bg-gradient-to-r from-dark-purple to-light-pink shadow-md grid grid-cols-3 grid-rows-1 items-center h-20 hidden-top-bar border-b">
         <!-- Logo Section -->
         <div class="top-bar-logo flex justify-start items-center px-4 col-start-1 col-end-2">
-        <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-10 pointer-events-none" id="top-bar-logo">
+            <a href="{% url 'IMBD_app:home' %}">
+            <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-10 pointer-events-none" id="top-bar-logo">
+            </a>
         </div>
 
         <!-- Search Bar Section -->

@@ -76,8 +76,6 @@ class MovieForm(forms.ModelForm):
             'date': forms.NumberInput(attrs={
                 'class': 'form-field',
                 'placeholder': 'Enter release year',
-                'min': 1900,  # Optional: You can limit the year range
-                'max': 2100,
             }),
             'genre': forms.Select(attrs={
                 'class': 'form-field',

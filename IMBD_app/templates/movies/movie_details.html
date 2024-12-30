@@ -1,14 +1,47 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 
-        {% block title %} Movie_xy {% endblock %}
-    
-            {% block main%}
-            <br>
-            <br>
-            <br>
-            <br>
-            <h1>{{ movie.title }}</h1>
-            <p>Release Date: {{ movie.release_date }}</p>
-            <p>{{ movie.description }}</p>
+{% block title %}{{ movie.title }}{% endblock %}
 
-            {% endblock main%}
+{% block main %}
+<div class="min-h-screen bg-purple-200 text-text-white flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full bg-f-lighter-purple rounded-lg shadow-lg overflow-hidden">
+        <!-- Movie Banner -->
+        <div class="relative h-64 bg-cover bg-center" style="background-image: url('{{ movie.image }}');"> <!-- need movie banners here, maybe change bit so normal pics work too-->
+            <div class="absolute inset-0 bg-dark-purple bg-opacity-60"></div>
+        </div>
+
+        <!-- Movie Details -->
+        <div class="p-6 space-y-4">
+            <h1 class="text-4xl font-bold text-text-white">{{ movie.title }}</h1>
+            <p class="text-text-white">Release Date: <span class="font-medium text-search-bar-purple">{{ movie.date }}</span></p>
+            <p class="text-text-white">{{ movie.description }}</p>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="p-6 bg-f-border-purple border-t border-f-lighter-purple">
+            <h2 class="text-2xl font-semibold text-text-white mb-3">Additional Information</h2>
+            <ul class="space-y-2">
+                <li>
+                    <strong class="text-search-bar-purple">Director:</strong> {{ movie.directors }}
+                </li>
+                <li>
+                    <strong class="text-search-bar-purple">Actors:</strong> {{ movie.actors|join:", " }}
+                </li>
+                <li>
+                    <strong class="text-search-bar-purple">Genre:</strong> {{ movie.genre }}
+                </li>
+                <li>
+                    <strong class="text-search-bar-purple">Rating:</strong> {{ movie.rating }} / 10
+                </li>
+            </ul>
+        </div>
+
+        <!-- Call to Action (Optional) -->
+        <div class="p-6 bg-submit-button text-center">
+            <button class="px-4 py-2 bg-hover-button hover:bg-light-pink text-text-white font-bold rounded-lg transition">
+                Watch Trailer
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

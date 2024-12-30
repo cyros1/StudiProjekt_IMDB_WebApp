@@ -9,18 +9,31 @@ from django.shortcuts import render
 def home(request):
     return render(request, "home.html")
 
-# List of all movies (mock data)
-def movie_list(request):
-    movies = [
-        {'id': 1, 'title': 'Movie 1', 'release_date': '2024-01-01', 'description': 'A great movie!'},
-        {'id': 2, 'title': 'Movie 2', 'release_date': '2024-01-02', 'description': 'Another great movie!'}
+# Test movie Data
+def get_movies():
+    return [
+        {'id': 1, 'title': 'Wolves with Guns', 'date': '2024-01-01', 'genre': 'action', 'description': 'GUNS EVERYWHERE', 'actors': '', 'image': '/static/images/vinonpotail.jpeg'},
+        {'id': 2, 'title': 'Evil is Coming', 'date': '2024-01-02', 'genre': 'thriller', 'description': 'THE WORLD IS BURNING', 'actors': '', 'image': '/static/images/evil.jpeg'},
+        {'id': 3, 'title': 'Stickmen', 'date': '2024-01-02', 'genre': 'comedy', 'description': '???', 'actors': '', 'image': '/static/images/onyplic.jpeg'},
     ]
+
+# List of all movies (using mock data)
+def movie_list(request):
+    movies = get_movies()
     return render(request, "movies/movie_list.html", {'movies': movies})
 
-# Details of a specific movie (mock data)
+
+# List of movies for landing page (using mock data)
+def home(request):
+    movies = get_movies()
+    return render(request, "home.html", {'movies': movies})
+
+# Details of a specific movie (using mock data)
 def movie_details(request, pk):
-    # Simulating fetching movie by pk (id)
-    movie = {'id': pk, 'title': f'Movie {pk}', 'release_date': '2024-01-01', 'description': 'Detailed description of movie.'}
+    movies = get_movies()
+    movie = next((m for m in movies if m['id'] == pk), None)
+    if not movie:
+        return render(request, "404.html")
     return render(request, "movies/movie_details.html", {'movie': movie})
 
 # List of all actors (mock data)
