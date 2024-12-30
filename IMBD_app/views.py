@@ -3,17 +3,59 @@ from .forms import ActorForm, DirectorForm, MovieForm
 
 # Create your views here.
 
+from django.shortcuts import render
+
+# Home Page
 def home(request):
     return render(request, "home.html")
 
-def movie(request):
-    return render(request, "movie.html")
+# List of all movies (mock data)
+def movie_list(request):
+    movies = [
+        {'id': 1, 'title': 'Movie 1', 'release_date': '2024-01-01', 'description': 'A great movie!'},
+        {'id': 2, 'title': 'Movie 2', 'release_date': '2024-01-02', 'description': 'Another great movie!'}
+    ]
+    return render(request, "movies/movie_list.html", {'movies': movies})
 
-def actor(request):
-    return render(request, "actor.html")
+# Details of a specific movie (mock data)
+def movie_details(request, pk):
+    # Simulating fetching movie by pk (id)
+    movie = {'id': pk, 'title': f'Movie {pk}', 'release_date': '2024-01-01', 'description': 'Detailed description of movie.'}
+    return render(request, "movies/movie_details.html", {'movie': movie})
 
-def director(request):
-    return render(request, "director.html")
+# List of all actors (mock data)
+def actor_list(request):
+    actors = [
+        {'id': 1, 'name': 'Actor 1', 'biography': 'Biography of actor 1'},
+        {'id': 2, 'name': 'Actor 2', 'biography': 'Biography of actor 2'}
+    ]
+    return render(request, "actors/actor_list.html", {'actors': actors})
+
+# Details of a specific actor (mock data)
+def actor_details(request, pk):
+    actor = {'id': pk, 'name': f'Actor {pk}', 'biography': 'Detailed biography of actor.'}
+    return render(request, "actors/actor_details.html", {'actor': actor})
+
+# List of all directors (mock data)
+def director_list(request):
+    directors = [
+        {'id': 1, 'name': 'Director 1', 'biography': 'Biography of director 1'},
+        {'id': 2, 'name': 'Director 2', 'biography': 'Biography of director 2'}
+    ]
+    return render(request, "directors/director_list.html", {'directors': directors})
+
+# Details of a specific director (mock data)
+def director_details(request, pk):
+    director = {'id': pk, 'name': f'Director {pk}', 'biography': 'Detailed biography of director.'}
+    return render(request, "directors/director_details.html", {'director': director})
+
+# Login Page
+def login(request):
+    return render(request, "auth/login.html")
+
+# Signup Page
+def signup(request):
+    return render(request, "auth/signup.html")
 
 
 def create(request):

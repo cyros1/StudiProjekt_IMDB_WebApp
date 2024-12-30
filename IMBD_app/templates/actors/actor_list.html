@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+
+        {% load static %}
+    {% block main %}
+    <br>
+    <br>
+    <br>
+    <br>
+
+        <h1>Actor List</h1>
+        <ul>
+        {% for actor in actors %}
+                <li>
+                <a href="{% url 'IMBD_app:actor_details' pk=actor.id %}">{{ actor.name }}</a>
+                </li>
+        {% endfor %}
+        </ul>
+    {% endblock main %}

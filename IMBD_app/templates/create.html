@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}Add Entity{% endblock %}
 
+{% load static %}
+
 {% block main %}
+<link rel="stylesheet" href="{% static 'output.css' %}">
     <br>
     <br>
     <br>
@@ -20,61 +23,49 @@
         <div id="actorForm" class="entityForm hidden">
             <form method="POST" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
-                <input type="hidden" name="form_type" value="actor">
-                    <!-- form_type variable ist actor, s. views.create -->
-                {{ actor_form.as_p }}
-                
-                {% if actor_form.errors %}
-                    <div class="errorlist text-red-500 text-sm">
-                        {% for field in actor_form %}
-                            {% for error in field.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        {% endfor %}
+                {% for field in actor_form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block">{{ field.label }}:</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="text-red-500 text-sm">{{ field.errors|join:", " }}</p>
+                        {% endif %}
                     </div>
-                {% endif %}
-                    <!-- Mögliche Errors werden aufgelistet, wenn welche auftreten -->
+                {% endfor %}
                 <button type="submit" class="w-full bg-submit-button hover:bg-hover-button text-text-white font-semibold py-3 rounded-lg">Submit</button>
-            </form>
+            </form>            
         </div>
         
         <!-- Director Form -->
         <div id="directorForm" class="entityForm hidden">
             <form method="POST" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
-                <input type="hidden" name="form_type" value="director">
-                {{ director_form.as_p }}
-                
-                {% if director_form.errors %}
-                    <div class="errorlist text-red-500 text-sm">
-                        {% for field in director_form %}
-                            {% for error in field.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        {% endfor %}
+                {% for field in director_form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block">{{ field.label }}:</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="text-red-500 text-sm">{{ field.errors|join:", " }}</p>
+                        {% endif %}
                     </div>
-                {% endif %}
-                
+                {% endfor %}
                 <button type="submit" class="w-full bg-submit-button hover:bg-hover-button text-text-white font-semibold py-3 rounded-lg">Submit</button>
-            </form>
+            </form>            
         </div>
 
         <!-- Movie Form -->
         <div id="movieForm" class="entityForm hidden">
             <form method="POST" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
-                <input type="hidden" name="form_type" value="movie">
-                {{ movie_form.as_p }}
-                
-                {% if movie_form.errors %}
-                    <div class="errorlist text-red-500 text-sm">
-                        {% for field in movie_form %}
-                            {% for error in field.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        {% endfor %}
+                {% for field in movie_form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block">{{ field.label }}:</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="text-red-500 text-sm">{{ field.errors|join:", " }}</p>
+                        {% endif %}
                     </div>
-                {% endif %}
+                {% endfor %}
                 
                 <button type="submit" class="w-full bg-submit-button hover:bg-hover-button text-text-white font-semibold py-3 rounded-lg">Submit</button>
             </form>

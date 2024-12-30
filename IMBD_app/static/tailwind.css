@@ -70,6 +70,18 @@
     .card-button:hover {
         background-color: #7A4D94; 
     }
+
+    .form-field {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #402B4C;
+        border-width: 1px;
+        border-color: #362242;
+        border-radius: 0.5rem;
+        color: #DDD1DD;
+    }
+
+    
 }
 
 

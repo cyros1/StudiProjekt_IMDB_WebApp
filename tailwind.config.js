@@ -3,6 +3,7 @@ module.exports = {
   content: [
       './IMBD_app/templates/**/*.html',
       './IMBD_app/static/**/*.js',
+      './IMBD_app/static/**/*.css',
   ],
   theme: {
       extend: {

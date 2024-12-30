@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+
+        {% load static %}
+    {% block main %}
+    <br>
+    <br>
+    <br>
+    <br>
+
+        <h1>Director List</h1>
+        <ul>
+        {% for director in directors %}
+                <li>
+                <a href="{% url 'IMBD_app:director_details' pk=director.id %}">{{ director.name }}</a>
+                </li>
+        {% endfor %}
+        </ul>
+    {% endblock main %}

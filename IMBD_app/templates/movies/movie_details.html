@@ -1,0 +1,14 @@
+{% extends 'base.html' %} 
+
+        {% block title %} Movie_xy {% endblock %}
+    
+            {% block main%}
+            <br>
+            <br>
+            <br>
+            <br>
+            <h1>{{ movie.title }}</h1>
+            <p>Release Date: {{ movie.release_date }}</p>
+            <p>{{ movie.description }}</p>
+
+            {% endblock main%}
