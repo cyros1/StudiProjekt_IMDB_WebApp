@@ -26,10 +26,12 @@
             <div id="logo" class="logo-container mb-4 transition-all duration-500 ease-in-out">
                 <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-96">
             </div>
-    
+
             <!-- Search Bar -->
-            <div id="search-bar" class="search-bar-container transition-all duration-500 ease-in-out">
-                <input type="text" placeholder="Search..." class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div id="search-bar" class="search-bar-container transition-all duration-500 ease-in-out">
+                    <form method="get" action="{% url 'IMBD_app:movie_list' %}">
+                        <input name='q' type="text" placeholder="Search..." class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </form>
             </div>
         </div>
     </div>
@@ -107,20 +109,6 @@
             
         </section>
     </div>
-
-        {% comment %} 
-        {% for movie in Movies %}
-        <div>
-            <h2>{{ movie.title }}</h2>
-            <p>Genre: {{ movie.genre }}</p>
-            <p>Veröffentlicht am: {{ movie.date }}</p>
-        </div>
-        {% endfor %} 
-
-        ich bin so lost
-        
-        {% endcomment %}
-        
 
     <script>
         const topBar = document.getElementById('top-bar');

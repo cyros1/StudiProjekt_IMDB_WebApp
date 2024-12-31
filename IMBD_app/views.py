@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
+from .models import Movie, Actor, Director
 from .forms import ActorForm, DirectorForm, MovieForm
 
 # Create your views here.
@@ -20,6 +21,11 @@ def get_movies():
 # List of all movies (using mock data)
 def movie_list(request):
     movies = get_movies()
+    query = request.GET.get('q')
+
+    if query:
+        movies = [movie for movie in movies if query.lower() in movie['title'].lower()]
+    
     return render(request, "movies/movie_list.html", {'movies': movies})
 
 

@@ -32,9 +32,11 @@
 
         <!-- Search Bar Section -->
         <div class="top-bar-search justify-self-center" id="top-bar-search">
-        <input type="text" 
+            <form method="get" action="{% url 'IMBD_app:movie_list' %}">
+                <input type="text" name='q'
                 placeholder="Search..." 
                 class="px-4 py-2 text-sm rounded-full border-2 border-search-bar-pink focus:outline-none focus:border-search-bar-purple w-96 max-w-lg">
+            </form>
         </div>
 
         <!-- Menu and Sign Up Buttons Section -->

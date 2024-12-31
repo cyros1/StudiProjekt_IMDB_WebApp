@@ -16,4 +16,8 @@
         {% endfor %}
         </ul>
 
+        {% if not movies %}
+                <p>No movies found.</p>
+        {% endif %}
+
         {% endblock main%}
