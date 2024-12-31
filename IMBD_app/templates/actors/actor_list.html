@@ -16,4 +16,9 @@
                 </li>
         {% endfor %}
         </ul>
+
+        {% if not actors %}
+        <p>No actors found.</p>
+        {% endif %}
+
     {% endblock main %}

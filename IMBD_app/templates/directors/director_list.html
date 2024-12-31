@@ -16,4 +16,7 @@
                 </li>
         {% endfor %}
         </ul>
+        {% if not directors %}
+        <p>No directors found.</p>
+        {% endif %}
     {% endblock main %}
