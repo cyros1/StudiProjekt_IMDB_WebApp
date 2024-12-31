@@ -20,7 +20,7 @@
     <body class="bg-purple-200">
         <main class="spaced-content">
 
-            <!-- Top Bar -->
+        <!-- Top Bar -->
         <div id="top-bar" 
         class="top-bar z-10 fixed top-0 left-0 w-full bg-gradient-to-r from-dark-purple to-light-pink shadow-md grid grid-cols-3 grid-rows-1 items-center h-20 hidden-top-bar border-b">
         <!-- Logo Section -->
@@ -37,46 +37,145 @@
                 class="px-4 py-2 text-sm rounded-full border-2 border-search-bar-pink focus:outline-none focus:border-search-bar-purple w-96 max-w-lg">
         </div>
 
-        <!-- Menu Button Section -->
-        <div class="flex justify-end items-center px-4 col-start-3 col-end-4">
-        <button type="button" 
-                class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" 
-                id="menu-button" aria-expanded="false" aria-haspopup="false">
-            Categories
-            <svg class="-mr-1 size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                <path fill-rule="evenodd" 
-                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" 
-                        clip-rule="evenodd" />
-            </svg>
-        </button>
+        <!-- Menu and Sign Up Buttons Section -->
+        <div class="flex justify-end items-center px-4 col-start-3 col-end-4 gap-4">
+            <!-- Menu Button -->
+            <button 
+                id="menu-button"
+                type="button" 
+                class="relative px-4 py-2 text-sm font-semibold text-text-white bg-dark-purple rounded-md group overflow-hidden hover:bg-hover-button transition-all duration-300" 
+                aria-expanded="false" 
+                aria-haspopup="true">
+                <span class="absolute inset-0 border-2 border-dark-purple rounded-md transition-all duration-300 group-hover:border-hover-button"></span>
+                <span class="relative">Categories</span>
+            </button>
+
+            <!-- Sign Up Button -->
+            <div class="relative">
+                <button  
+                    class="relative px-4 py-2 text-sm font-semibold text-text-white bg-dark-purple rounded-md group overflow-hidden hover:bg-hover-button  transition-all duration-300">
+                    <span class="absolute inset-0 border-2 border-dark-purple rounded-md transition-all duration-300 group-hover:border-hover-button "></span>
+                    <span class="relative"><a href="/login/">Login</a></span>
+                </button>
+            </div>
         </div>
         </div>
+
         
             {% block main %}
             {% endblock main %}
         </main>
         
         <div 
-        id="fullscreen-overlay" 
-        class="fixed inset-0 z-50 bg-gradient-to-br from-dark-purple to-light-pink hidden">
-        <!-- Close Button -->
-        <button 
-            type="button" 
-            class="absolute top-4 right-4 text-gray-500 hover:text-gray-900" 
-            id="close-overlay">
-            Close
-        </button>
+    id="fullscreen-overlay" 
+    class="fixed inset-0 z-50 bg-gradient-to-br from-dark-purple to-light-pink hidden">
     
-        <!-- Categories Content -->
-            <div class="flex flex-col items-center justify-center h-full px-4">
-                <h2 class="text-3xl font-bold mb-6">Categories</h2>
-                <ul class="space-y-4">
-                    <li><a href="#" class="text-lg text-blue-600 hover:underline">Top Movies</a></li>
-                    <li><a href="#" class="text-lg text-blue-600 hover:underline">Most Recent Movies</a></li>
-                    <li><a href="#" class="text-lg text-blue-600 hover:underline">Popular Celebrities</a></li>
+    <!-- Logo -->
+    <div id="logo" class="absolute top-0 left-0 logo-container transition-all duration-500 ease-in-out">
+        <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-80">
+    </div>
+
+    <!-- Close Button -->
+    <button 
+        type="button" 
+        class="absolute top-4 right-4 bg-f-lighter-purple text-text-white p-2 rounded-full hover:bg-f-border-purple transition"
+        id="close-overlay">
+        ✖
+    </button>
+
+    <!-- Categories Content -->
+    <div class="flex items-center justify-center h-full px-6 py-12">
+        <!-- Category Boxes -->
+        <div class="grid grid-cols-3 gap-6">
+            <!-- Movies Category -->
+            <div class="bg-footer-purple text-text-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Movies</h3>
+                <ul class="space-y-2 pl-2">
+                    <li>
+                        <a 
+                            href="#" 
+                            class="block text-base text-text-white underline decoration-dotted">
+                            Top 50 Movies
+                        </a>
+                    </li>
+                    <li>
+                        <a 
+                            href="#" 
+                            class="block text-base text-text-white underline decoration-dotted">
+                            Most Recent Movies
+                        </a>
+                    </li>
+                    <li>
+                        <a 
+                            href="/movies/" 
+                            class="block text-base text-text-white underline decoration-dotted">
+                            All Movies
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Directors Category -->
+            <div class="bg-footer-purple text-text-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Directors</h3>
+                <ul class="space-y-2 pl-2">
+                    <li>
+                        <a 
+                            href="#" 
+                            class="block text-base text-text-white underline decoration-dotted">
+                            Top 10 Directors
+                        </a>
+                    </li>
+                    <li>
+                        <a 
+                            href="#" 
+                            class="block text-base text-text-white underline decoration-dotted">
+                            Most Recent Directors
+                        </a>
+                    </li>
+                    <li>
+                        <a 
+                            href="/directors/" 
+                            class="block text-base text-text-white underline decoration-dotted">
+                            All Directors
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Actors Category -->
+            <div class="bg-footer-purple text-text-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Actors</h3>
+                <ul class="space-y-2 pl-2">
+                    <li>
+                        <a 
+                            href="#" 
+                            class="block text-base text-text-white underline decoration-dotted">
+                            Top 50 Actors
+                        </a>
+                    </li>
+                    <li>
+                        <a 
+                            href="#" 
+                            class="block text-base text-text-white underline decoration-dotted">
+                            Most Popular Actors
+                        </a>
+                    </li>
+                    <li>
+                        <a 
+                            href="/actors/" 
+                            class="block text-base text-text-white underline decoration-dotted">
+                            All Actors
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
+    </div>
+</div>
+
+
+
 
             <script>
                 const menuButton = document.getElementById('menu-button');
