@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
-
-
-        {% load static %}
+{% load static %}
     {% block main %}
     <br>
     <br>
@@ -9,7 +7,7 @@
     <br>
 
         <h1>Actor List</h1>
-        <ul>
+        {% comment %} <ul>
         {% for actor in actors %}
                 <li>
                 <a href="{% url 'IMBD_app:actor_details' pk=actor.id %}">{{ actor.name }}</a>
@@ -19,6 +17,17 @@
 
         {% if not actors %}
         <p>No actors found.</p>
+        {% endif %} {% endcomment %}
+
+        {% if actors.exists %}
+                <h2>Results for "{{ query }}" in {{ category|title }}</h2>
+                {% for actor in actors %}
+                    <div>
+                        <h3><a href="{% url 'IMBD_app:actor_details' pk=actor.id %}">{{ actor }}</a></h3>
+                    </div>
+                    {% endfor %}
+        {% else %}
+            <p>No results found.</p>
         {% endif %}
 
-    {% endblock main %}
+{% endblock main %}

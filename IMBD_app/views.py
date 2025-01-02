@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Q
 from .models import Movie, Actor, Director
 from .forms import ActorForm, DirectorForm, MovieForm
 
@@ -20,13 +21,37 @@ def get_movies():
 
 # List of all movies (using mock data)
 def movie_list(request):
-    movies = get_movies()
-    query = request.GET.get('q')
+    query = request.GET.get('q')  # Suchbegriff aus dem Query-String
+    category = request.GET.get('category')  # Kategorie aus dem Dropdown-Menü
+
+    movies = Movie.objects.none()  # Leere QuerySets, falls nichts ausgewählt
+    actors = Actor.objects.none()
+    directors = Director.objects.none()
 
     if query:
-        movies = [movie for movie in movies if query.lower() in movie['title'].lower()]
-    
-    return render(request, "movies/movie_list.html", {'movies': movies})
+        if category == "movie":
+            movies = Movie.objects.filter(
+                Q(title__icontains=query) | Q(genre__icontains=query)
+            )
+        elif category == "actor":
+            actors = Actor.objects.filter(
+                Q(name__icontains=query) | Q(surname__icontains=query)
+            )
+        elif category == "director":
+            directors = Director.objects.filter(
+                Q(name__icontains=query) | Q(surname__icontains=query)
+            )
+        elif category == "genre":
+            movies = Movie.objects.filter(genre__icontains=query)
+
+    context = {
+        'movies': movies,
+        'actors': actors,
+        'directors': directors,
+        'query': query,
+        'category': category,
+    }
+    return render(request, 'movies/movie_list.html', context)
 
 
 # List of movies for landing page (using mock data)
@@ -44,11 +69,30 @@ def movie_details(request, pk):
 
 # List of all actors (mock data)
 def actor_list(request):
-    actors = [
-        {'id': 1, 'name': 'Actor 1', 'biography': 'Biography of actor 1'},
-        {'id': 2, 'name': 'Actor 2', 'biography': 'Biography of actor 2'}
-    ]
-    return render(request, "actors/actor_list.html", {'actors': actors})
+    query = request.GET.get('q')  # Suchbegriff aus dem Query-String
+    category = request.GET.get('category')  # Kategorie aus dem Dropdown-Menü
+
+    actors = Actor.objects.all()  # Alle Schauspieler aus der Datenbank abrufen
+
+    if query:
+        if category == "actor":
+            actors = actors.filter(
+                Q(name__icontains=query) | Q(surname__icontains=query)
+            )
+        elif category == "director":
+            directors = Director.objects.filter(
+                Q(name__icontains=query) | Q(surname__icontains=query)
+            )
+        elif category == "genre":
+            movies = Movie.objects.filter(genre__icontains=query)
+
+    context = {
+        'actors': actors,
+        'query': query,
+        'category': category,
+    }
+
+    return render(request, "actors/actor_list.html", context)
 
 # Details of a specific actor (mock data)
 def actor_details(request, pk):
@@ -57,11 +101,30 @@ def actor_details(request, pk):
 
 # List of all directors (mock data)
 def director_list(request):
-    directors = [
-        {'id': 1, 'name': 'Director 1', 'biography': 'Biography of director 1'},
-        {'id': 2, 'name': 'Director 2', 'biography': 'Biography of director 2'}
-    ]
-    return render(request, "directors/director_list.html", {'directors': directors})
+    query = request.GET.get('q')  # Suchbegriff aus dem Query-String
+    category = request.GET.get('category')  # Kategorie aus dem Dropdown-Menü
+
+    directors = Director.objects.all()  # Alle Directors aus der Datenbank abrufen
+
+    if query:
+        if category == "actor":
+            actors = actors.filter(
+                Q(name__icontains=query) | Q(surname__icontains=query)
+            )
+        elif category == "director":
+            directors = Director.objects.filter(
+                Q(name__icontains=query) | Q(surname__icontains=query)
+            )
+        elif category == "genre":
+            movies = Movie.objects.filter(genre__icontains=query)
+
+    context = {
+        'directors': directors,
+        'query': query,
+        'category': category,
+    }
+
+    return render(request, "directors/director_list.html", context)
 
 # Details of a specific director (mock data)
 def director_details(request, pk):
@@ -78,36 +141,39 @@ def signup(request):
 
 
 def create(request):
-    # Standardformulare initialisieren
     actor_form = ActorForm()
     director_form = DirectorForm()
     movie_form = MovieForm()
 
     if request.method == 'POST':
-        # Formulartyp aus den POST-Daten lesen, s. create.html
+        # Formulartyp aus den POST-Daten lesen
         form_type = request.POST.get('form_type')
+        print(f"Form type received: {form_type}")  # Debugging-Ausgabe
 
         if form_type == 'actor':
             actor_form = ActorForm(request.POST, request.FILES)
             if actor_form.is_valid():
                 actor_form.save()
+                print("Actor created successfully!")  # Debugging-Ausgabe
                 return render(request, 'success.html')  # Erfolgsseite
             else:
-                print("ERROR: Actor couldnt be created")
+                print("ERROR: Actor couldn't be created")
         elif form_type == 'director':
             director_form = DirectorForm(request.POST, request.FILES)
             if director_form.is_valid():
                 director_form.save()
+                print("Director created successfully!")  # Debugging-Ausgabe
                 return render(request, 'success.html')  # Erfolgsseite
             else:
-                print("ERROR: Director couldnt be created")
+                print("ERROR: Director couldn't be created")
         elif form_type == 'movie':
             movie_form = MovieForm(request.POST, request.FILES)
             if movie_form.is_valid():
                 movie_form.save()
+                print("Movie created successfully!")  # Debugging-Ausgabe
                 return render(request, 'success.html')  # Erfolgsseite
             else:
-                print("ERROR: Movie couldnt be created")
+                print("ERROR: Movie couldn't be created")
             
     return render(request, 'create.html', {
         'actor_form': actor_form,

@@ -30,7 +30,7 @@ class ActorForm(forms.ModelForm):
             }),
         }
 
-form = ActorForm()
+#form = ActorForm()
 actor = Actor.objects.filter(pk=1).first() 
 # versucht obj abzurufen mit pk 1, wenn nicht gefunden, gibt "none" zurück
 
@@ -60,7 +60,7 @@ class DirectorForm(forms.ModelForm):
             }),
         }
 
-form = DirectorForm()
+#form = DirectorForm()
 director = Director.objects.filter(pk=1).first() 
 # versucht obj abzurufen mit pk 1, wenn nicht gefunden, gibt "none" zurück
 
@@ -99,6 +99,6 @@ class MovieForm(forms.ModelForm):
         }
 
 # Example usage of the form and movie instance
-form = MovieForm()
+#form = MovieForm()
 movie = Movie.objects.filter(pk=1).first()
 

@@ -23,6 +23,7 @@
         <div id="actorForm" class="entityForm hidden">
             <form method="POST" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
+                <input type="hidden" name="form_type" value="actor"> <!-- Verstecktes Feld -->
                 {% for field in actor_form %}
                     <div>
                         <label for="{{ field.id_for_label }}" class="block">{{ field.label }}:</label>
@@ -40,6 +41,7 @@
         <div id="directorForm" class="entityForm hidden">
             <form method="POST" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
+                <input type="hidden" name="form_type" value="director"> <!-- Verstecktes Feld -->
                 {% for field in director_form %}
                     <div>
                         <label for="{{ field.id_for_label }}" class="block">{{ field.label }}:</label>
@@ -57,6 +59,7 @@
         <div id="movieForm" class="entityForm hidden">
             <form method="POST" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
+                <input type="hidden" name="form_type" value="movie"> <!-- Verstecktes Feld -->
                 {% for field in movie_form %}
                     <div>
                         <label for="{{ field.id_for_label }}" class="block">{{ field.label }}:</label>

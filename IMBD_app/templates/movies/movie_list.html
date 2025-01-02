@@ -9,7 +9,10 @@
         <br>
         <h1>Movie List</h1>
         <ul>
-        {% for movie in movies %}
+
+        {% comment %} alter code, selber grund wie in home.html {% endcomment %}
+
+        {% comment %} {% for movie in movies %}
                 <li>
                 <a href="{% url 'IMBD_app:movie_details' pk=movie.id %}">{{ movie.title }}</a>
                 </li>
@@ -18,6 +21,18 @@
 
         {% if not movies %}
                 <p>No movies found.</p>
-        {% endif %}
+        {% endif %} {% endcomment %}
+
+        {% if movies.exists %}
+                <h2>Results for "{{ query }}" in {{ category|title }}</h2>
+                {% for movie in movies %}
+                    <div>
+                        <h3><a href="{% url 'IMBD_app:movie_details' pk=movie.id %}">{{ movie.title }}</a></h3>
+                        <p>Genre: {{ movie.genre }}</p>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                        <p>No results found.</p>
+                    {% endif %}
 
         {% endblock main%}

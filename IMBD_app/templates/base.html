@@ -32,11 +32,47 @@
 
         <!-- Search Bar Section -->
         <div class="top-bar-search justify-self-center" id="top-bar-search">
+
+            {% comment %} 
+            alte search bar
             <form method="get" action="{% url 'IMBD_app:movie_list' %}">
                 <input type="text" name='q'
                 placeholder="Search..." 
                 class="px-4 py-2 text-sm rounded-full border-2 border-search-bar-pink focus:outline-none focus:border-search-bar-purple w-96 max-w-lg">
+            </form> {% endcomment %}
+
+            <form id="searchForm" method="get" action="{% url 'IMBD_app:movie_list' %}" style="display: flex; gap: 10px;">
+                <input type="text" name="q" placeholder="Search..." value="{{ query }}" class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                
+                <select id="categorySelect" name="category" class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="movie" {% if category == "movie" %}selected{% endif %}>Movies</option>
+                    <option value="actor" {% if category == "actor" %}selected{% endif %}>Actors</option>
+                    <option value="director" {% if category == "director" %}selected{% endif %}>Directors</option>
+                    <option value="genre" {% if category == "genre" %}selected{% endif %}>Genre</option>
+                </select>
+            
+                <button type="submit" class="px-4 py-2 text-lg bg-blue-500 text-white rounded-full hover:bg-blue-600">Search</button>
             </form>
+            
+            <script>
+                // URLs für die verschiedenen Kategorien definieren
+                const urls = {
+                    movie: "{% url 'IMBD_app:movie_list' %}",
+                    actor: "{% url 'IMBD_app:actor_list' %}",
+                    director: "{% url 'IMBD_app:director_list' %}"
+                };
+            
+                // HTML-Elemente referenzieren
+                const form = document.getElementById('searchForm');
+                const categorySelect = document.getElementById('categorySelect');
+            
+                // Ändere die action des Formulars, wenn die Kategorie gewechselt wird
+                categorySelect.addEventListener('change', (event) => {
+                    const selectedCategory = event.target.value;
+                    form.action = urls[selectedCategory] || urls['movie']; // Standard ist "movie_list"
+                });
+            </script>
+
         </div>
 
         <!-- Menu and Sign Up Buttons Section -->

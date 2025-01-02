@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
-
-
-        {% load static %}
+{% load static %}
     {% block main %}
     <br>
     <br>
@@ -9,8 +7,9 @@
     <br>
 
         <h1>Director List</h1>
-        <ul>
-        {% for director in directors %}
+              {% comment %} alter code
+                <ul>
+                {% for director in directors %}
                 <li>
                 <a href="{% url 'IMBD_app:director_details' pk=director.id %}">{{ director.name }}</a>
                 </li>
@@ -18,5 +17,17 @@
         </ul>
         {% if not directors %}
         <p>No directors found.</p>
+        {% endif %} {% endcomment %}
+
+        {% if directors.exists %}
+            <h2>Results for "{{ query }}" in {{ category|title }}</h2>
+                {% for director in directors %}
+                    <div>
+                        <h3><a href="{% url 'IMBD_app:director_details' pk=director.id %}">{{ director }}</a></h3>
+                    </div>
+                {% endfor %}
+        {% else %}
+            <p>No results found.</p>
         {% endif %}
-    {% endblock main %}
+        
+{% endblock main %}

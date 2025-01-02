@@ -37,7 +37,7 @@ class Movie(models.Model):
     ]
 
     title = models.CharField(max_length=255)
-    date = models.DateField()
+    date = models.IntegerField()  # Nur Jahr
     genre = models.CharField(max_length=20, choices=GENRE_CHOICES)
     # genre = models.CharField(max_length=100)
     description = models.TextField()
@@ -52,7 +52,7 @@ class Movie(models.Model):
         return self.title
 
 # Rating maybe erst auf Filmseite anzeigen lassen, Kommentarspalte
-# Durchschnittsrating weiter oben anzeigen lassen
+# Durchschnittsrating weiter oben auf film_details anzeigen lassen
 class Rating(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.DO_NOTHING, default=1)    
         # gehört zum jeweiligen Film dazu, wenn rating gelöscht wird, bleibt Movie am leben
@@ -64,3 +64,4 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"{self.author} - {self.movie.title}: {self.rating} stars"
+    
