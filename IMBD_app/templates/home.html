@@ -58,14 +58,16 @@
         <section class="category mb-10">
             <h2 class="text-2xl font-bold mb-4">Top Movies</h2>
             <div class="cards">
-                {% for movie in movies %}
+                {% for movie in top_movies %}
                 <div class="card">
                     <!-- Image -->
-                    <div class="card-image" style="background-image: url('{{ movie.image }}'); background-size: cover; background-position: center;"></div>
+                    <div class="card-image mb-2">
+                        <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}">
+                    </div>
                     <!-- Movie Title + Descr -->
                     <div>
                         <p class="card-title">{{ movie.title }}</p>
-                        <p class="card-description">{{ movie.description }}</p>
+                        <p class="card-description">{{ movie.vote_average}}</p>
                     </div>
                     <!-- Button to Movie Details -->
                     <button class="card-button">
@@ -73,55 +75,52 @@
                 </div>
                 {% endfor %}
             </div>
-            
         </section>
+
+    
         <!-- Add more sections as needed -->
         <section class="category mb-10">
-            <h2 class="text-2xl font-bold mb-4">Top Regisseur</h2>
+            <h2 class="text-2xl font-bold mb-4">Top Actors</h2>
             <div class="cards">
+                {% for actor in top_actors %}
                 <div class="card">
-                    <div class="card-image"></div>
-                    <div>
-                        <p class="card-title">Movie 69</p>
-                        <p class="card-description">coole zahlen man</p>
+                    <!-- Image -->
+                    <div class="card-image mb-2">
+                        <img src="https://image.tmdb.org/t/p/w500{{ actor.profile_path }}" alt="{{ actor.name }}">
                     </div>
-                    <button class="card-button">Show More</button>
-                </div>
-            
-                <div class="card">
-                    <div class="card-image"></div>
+                    <!-- Movie Title + Descr -->
                     <div>
-                        <p class="card-title">Movie 69</p>
-                        <p class="card-description">coole zahlen man</p>
+                        <p class="card-title">{{ actor.name }}</p>
+                        <p class="card-description">{{ actor.popularity}}</p>
                     </div>
-                    <button class="card-button">Show More</button>
+                    <!-- Button to Movie Details -->
+                    <button class="card-button">
+                        <a href="/actors/{{ actor.id }}">Show More</a></button>
                 </div>
+                {% endfor %}
             </div>
-            
         </section>
 
         <section class="category mb-10">
-            <h2 class="text-2xl font-bold mb-4">Top Director</h2>
+            <h2 class="text-2xl font-bold mb-4">Top Directors</h2>
             <div class="cards">
+                {% for director in top_directors %}
                 <div class="card">
-                    <div class="card-image"></div>
-                    <div>
-                        <p class="card-title">Movie 69</p>
-                        <p class="card-description">coole zahlen man</p>
+                    <!-- Image -->
+                    <div class="card-image mb-2">
+                        <img src="https://image.tmdb.org/t/p/w500{{ director.profile_path }}" alt="{{ director.name }}">
                     </div>
-                    <button class="card-button">Show More</button>
-                </div>
-            
-                <div class="card">
-                    <div class="card-image"></div>
+                    <!-- Movie Title + Descr -->
                     <div>
-                        <p class="card-title">Movie 69</p>
-                        <p class="card-description">coole zahlen man</p>
+                        <p class="card-title">{{ director.name }}</p>
+                        <p class="card-description">{{ director.popularity}}</p>
                     </div>
-                    <button class="card-button">Show More</button>
+                    <!-- Button to Movie Details -->
+                    <button class="card-button">
+                        <a href="/directors/{{ director.id }}">Show More</a></button>
                 </div>
+                {% endfor %}
             </div>
-            
         </section>
     </div>
 

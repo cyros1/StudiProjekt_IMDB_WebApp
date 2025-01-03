@@ -17,23 +17,33 @@
         align-items: start;
         justify-content: center;
         gap: 0.75rem;
-        width: 20rem; 
-        height: 30rem; 
+        min-width: 20rem; 
+        height: 35rem; 
         /* background-image: linear-gradient(to bottom right, #206E82, #9DD7E0);  */
         background-color: #2D1E35;
         border-radius: 1.5rem; 
         color: #d4d4d8; 
         padding: 1.5rem; 
+        scroll-snap-allign: start;
         transition: box-shadow 0.3s ease, background-color 0.3s ease; 
     }
 
     .card-image {
-        width: stretch; 
-        height: 20rem; 
-        background-color: black; 
+        width: 100%; 
+        height: 25rem; 
+        background-color: black;
         border-radius: 1rem;
         margin-bottom: 1rem;
+        overflow: hidden;
     }
+    
+    .card-image img {
+        width: 100%; 
+        height: 100%;
+        object-fit: cover; 
+        border-radius: inherit;
+    }
+    
 
     .card-title {
         text-align: left;
@@ -70,7 +80,6 @@
     .card-button:hover {
         background-color: #7A4D94; 
     }
-
     .form-field {
         width: 100%;
         padding: 0.75rem;

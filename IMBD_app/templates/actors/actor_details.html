@@ -1,13 +1,33 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 
-        {% block title %} Actor {% endblock %}
-    
-        {% block main%}
-        <br>
-        <br>
-        <br>
-        <br>
-        <h1>{{ actor.name }}</h1>
-        <p>Actors Biography: {{ actor.biography }}</p>
+{% block title %}{{ actor.name }}{% endblock %}
 
-        {% endblock main%}
+{% block main %}
+<div class="min-h-screen bg-purple-200 text-text-white flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full bg-f-lighter-purple rounded-lg shadow-lg overflow-hidden">
+        <!-- Actor Header: Profile Picture and Name -->
+        <div class="flex items-center p-6 space-x-6">
+            <!-- Actor Profile Picture -->
+            <div class="flex-shrink-0">
+                <img src="https://image.tmdb.org/t/p/w500{{ actor.profile_path }}" alt="{{ actor.name }}" class="w-24 h-30 border-4 border-f-lighter-purple">
+            </div>
+            <!-- Actor Name and Bio -->
+            <div>
+                <h1 class="text-4xl font-bold text-text-white">{{ actor.name }}</h1>
+                <p class="text-text-white mt-2">{{ actor.biography }}</p>
+            </div>
+        </div>
+
+        <!-- Top Movies the Actor is Known For -->
+        <div class="p-6 bg-f-border-purple border-t border-f-lighter-purple">
+            <h2 class="text-2xl font-semibold text-text-white mb-3">Top Movies</h2>
+            <ul class="space-y-2">
+                {% for movie in top_movies %}
+                    <li><a href="/movies/{{ movie.id }}" class="text-search-bar-purple">{{ movie.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

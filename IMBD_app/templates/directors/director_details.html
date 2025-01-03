@@ -1,13 +1,33 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 
-        {% block title %} Director {% endblock %}
-    
-        {% block main%}
-        <br>
-        <br>
-        <br>
-        <br>
-        <h1>{{ director.name }}</h1>
-        <p>Directors Biography: {{ director.biography }}</p>
+{% block title %}{{ director.name }}{% endblock %}
 
-        {% endblock main%}
+{% block main %}
+<div class="min-h-screen bg-purple-200 text-text-white flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full bg-f-lighter-purple rounded-lg shadow-lg overflow-hidden">
+        <!-- Director Header: Profile Picture and Name -->
+        <div class="flex items-center p-6 space-x-6">
+            <!-- Director Profile Picture -->
+            <div class="flex-shrink-0">
+                <img src="https://image.tmdb.org/t/p/w500{{ director.profile_path }}" alt="{{ director.name }}" class="w-32 h-32 rounded-full border-4 border-f-lighter-purple">
+            </div>
+            <!-- Director Name and Bio -->
+            <div>
+                <h1 class="text-4xl font-bold text-text-white">{{ director.name }}</h1>
+                <p class="text-text-white mt-2">{{ director.biography }}</p>
+            </div>
+        </div>
+
+        <!-- Top Movies Directed by the Director -->
+        <div class="p-6 bg-f-border-purple border-t border-f-lighter-purple">
+            <h2 class="text-2xl font-semibold text-text-white mb-3">Top Directed Movies</h2>
+            <ul class="space-y-2">
+                {% for movie in top_movies %}
+                    <li><a href="/movies/{{ movie.id }}" class="text-search-bar-purple">{{ movie.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

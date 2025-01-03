@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.db.models import Q
 from .models import Movie, Actor, Director
 from .forms import ActorForm, DirectorForm, MovieForm
+from .utils.tmdb import fetch_tmdb_data
+import requests
 
 # Create your views here.
 
@@ -9,15 +11,34 @@ from django.shortcuts import render
 
 # Home Page
 def home(request):
-    return render(request, "home.html")
+    # Fetch top movies
+    top_movies = fetch_tmdb_data("movie/popular", params={"language": "en-US", "page": 1})
 
-# Test movie Data
-def get_movies():
-    return [
-        {'id': 1, 'title': 'Wolves with Guns', 'date': '2024-01-01', 'genre': 'action', 'description': 'GUNS EVERYWHERE', 'actors': '', 'image': '/static/images/vinonpotail.jpeg'},
-        {'id': 2, 'title': 'Evil is Coming', 'date': '2024-01-02', 'genre': 'thriller', 'description': 'THE WORLD IS BURNING', 'actors': '', 'image': '/static/images/evil.jpeg'},
-        {'id': 3, 'title': 'Stickmen', 'date': '2024-01-02', 'genre': 'comedy', 'description': '???', 'actors': '', 'image': '/static/images/onyplic.jpeg'},
+    # Round vote_average for each movie
+    for movie in top_movies.get("results", []):
+        movie['vote_average'] = round(movie['vote_average'], 1)  # Round to 1 decimal place
+
+    
+    # TMDB only provides endpoint for persons, the specifics (actor/director) have to be filtered out from the json
+    top_people = fetch_tmdb_data("person/popular", params={"language": "en-US", "page": 1})
+
+    top_actors = [
+        person for person in top_people.get("results", [])
+        if person.get("known_for_department") == "Acting"
     ]
+
+    top_directors = [
+        person for person in top_people.get("results", [])
+        if person.get("known_for_department") == "Directing"
+    ]
+
+    return render(request, "home.html", {
+        "top_movies": top_movies.get("results", []),
+        "top_actors": top_actors,
+        "top_directors" : top_directors
+    })
+
+
 
 # List of all movies (using mock data)
 def movie_list(request):
@@ -54,18 +75,36 @@ def movie_list(request):
     return render(request, 'movies/movie_list.html', context)
 
 
-# List of movies for landing page (using mock data)
-def home(request):
-    movies = get_movies()
-    return render(request, "home.html", {'movies': movies})
 
-# Details of a specific movie (using mock data)
+# Function to fetch movie credits (cast and crew)
+def fetch_movie_credits(movie_id):
+    return fetch_tmdb_data(f"movie/{movie_id}/credits", params={"language": "en-US"})
+
+# Details of a specific movie 
 def movie_details(request, pk):
-    movies = get_movies()
-    movie = next((m for m in movies if m['id'] == pk), None)
-    if not movie:
-        return render(request, "404.html")
-    return render(request, "movies/movie_details.html", {'movie': movie})
+    movie = fetch_tmdb_data(f"movie/{pk}", params={"language": "en-US"})
+
+    # Fetch movie credits:
+    credits = fetch_movie_credits(pk)
+    cast = credits.get('cast', [])
+    crew = credits.get('crew', [])
+
+    # Get director from the crew
+    directors = [member['name'] for member in crew if member['job'] == 'Director']
+    # Select only top 5 actors
+    top_actors = cast[:5] 
+
+    return render(request, "movies/movie_details.html", {
+        "movie": movie,
+        "cast": top_actors,
+        "directors": directors,
+    })
+
+
+
+
+
+
 
 # List of all actors (mock data)
 def actor_list(request):
@@ -94,10 +133,25 @@ def actor_list(request):
 
     return render(request, "actors/actor_list.html", context)
 
-# Details of a specific actor (mock data)
+# Details of a specific actor
 def actor_details(request, pk):
-    actor = {'id': pk, 'name': f'Actor {pk}', 'biography': 'Detailed biography of actor.'}
-    return render(request, "actors/actor_details.html", {'actor': actor})
+    # Fetch actor details
+    actor = fetch_tmdb_data(f"person/{pk}", params={"language": "en-US"})
+    
+    # Fetch actor's movie credits (known for roles)
+    movie_credits = fetch_tmdb_data(f"person/{pk}/movie_credits", params={"language": "en-US"})
+    
+    # Get the top 5 movies the actor is known for
+    top_movies = movie_credits.get('cast', [])[:5]  # Limiting to the top 5 movies
+
+    return render(request, "actors/actor_details.html", {
+        "actor": actor,
+        "top_movies": top_movies,
+    })
+
+
+
+
 
 # List of all directors (mock data)
 def director_list(request):
@@ -126,10 +180,26 @@ def director_list(request):
 
     return render(request, "directors/director_list.html", context)
 
-# Details of a specific director (mock data)
+# Details of a specific director 
 def director_details(request, pk):
-    director = {'id': pk, 'name': f'Director {pk}', 'biography': 'Detailed biography of director.'}
-    return render(request, "directors/director_details.html", {'director': director})
+    # Fetch director details
+    director = fetch_tmdb_data(f"person/{pk}", params={"language": "en-US"})
+    
+    # Fetch director's movie credits (directed works)
+    movie_credits = fetch_tmdb_data(f"person/{pk}/movie_credits", params={"language": "en-US"})
+    
+    # Get the top 5 movies the director has directed
+    top_movies = movie_credits.get('crew', [])[:5]  # Limiting to the top 5 directed movies
+
+    return render(request, "directors/director_details.html", {
+        "director": director,
+        "top_movies": top_movies,
+    })
+
+
+
+
+
 
 # Login Page
 def login(request):
@@ -138,6 +208,7 @@ def login(request):
 # Signup Page
 def signup(request):
     return render(request, "auth/signup.html")
+
 
 
 def create(request):
