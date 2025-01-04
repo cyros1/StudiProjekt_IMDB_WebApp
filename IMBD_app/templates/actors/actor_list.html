@@ -7,27 +7,23 @@
     <br>
 
         <h1>Actor List</h1>
-        {% comment %} <ul>
-        {% for actor in actors %}
-                <li>
-                <a href="{% url 'IMBD_app:actor_details' pk=actor.id %}">{{ actor.name }}</a>
-                </li>
+        <h3>Local Actors</h3>
+        {% for actor in actors_db %}
+            <div>
+                <h4><a href="{% url 'IMBD_app:actor_details' pk=actor.id %}">{{ actor }}</a></h4>
+            </div>
+        {% empty %}
+            <p>No local actors found.</p>
         {% endfor %}
-        </ul>
-
-        {% if not actors %}
-        <p>No actors found.</p>
-        {% endif %} {% endcomment %}
-
-        {% if actors.exists %}
-                <h2>Results for "{{ query }}" in {{ category|title }}</h2>
-                {% for actor in actors %}
-                    <div>
-                        <h3><a href="{% url 'IMBD_app:actor_details' pk=actor.id %}">{{ actor }}</a></h3>
-                    </div>
-                    {% endfor %}
-        {% else %}
-            <p>No results found.</p>
-        {% endif %}
-
-{% endblock main %}
+        <br>
+        <br>
+        <h3>TMDB Actors</h3>
+        {% for actor in actors_tmdb %}
+            <div>
+                <h4><a href="{% url 'IMBD_app:actor_details' pk=actor.id %}">{{ actor.name }}</a></h4>
+            </div>
+        {% empty %}
+            <p>No TMDB actors found.</p>
+        {% endfor %}
+    
+    {% endblock main%}

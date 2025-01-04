@@ -40,39 +40,35 @@ def home(request):
 
 
 
-# List of all movies (using mock data)
+# TODO
+# List of all movies
 def movie_list(request):
-    query = request.GET.get('q')  # Suchbegriff aus dem Query-String
-    category = request.GET.get('category')  # Kategorie aus dem Dropdown-Menü
+    query = request.GET.get('q', '').strip()  # Suchbegriff
+    category = request.GET.get('category', 'movie')  # Standardkategorie "movie"
 
-    movies = Movie.objects.none()  # Leere QuerySets, falls nichts ausgewählt
-    actors = Actor.objects.none()
-    directors = Director.objects.none()
+    # Datenbankabfragen
+    movies_db = Movie.objects.none()
+
+    # TMDB-Abfragen
+    movies_tmdb = []
 
     if query:
-        if category == "movie":
-            movies = Movie.objects.filter(
+            # Lokale Filme filtern
+            movies_db = Movie.objects.filter(
                 Q(title__icontains=query) | Q(genre__icontains=query)
             )
-        elif category == "actor":
-            actors = Actor.objects.filter(
-                Q(name__icontains=query) | Q(surname__icontains=query)
-            )
-        elif category == "director":
-            directors = Director.objects.filter(
-                Q(name__icontains=query) | Q(surname__icontains=query)
-            )
-        elif category == "genre":
-            movies = Movie.objects.filter(genre__icontains=query)
+            # TMDB-Filme suchen
+            tmdb_response = fetch_tmdb_data("search/movie", params={"query": query})
+            movies_tmdb = tmdb_response.get("results", [])
+
 
     context = {
-        'movies': movies,
-        'actors': actors,
-        'directors': directors,
-        'query': query,
-        'category': category,
+        "query": query,
+        "category": category,
+        "movies_db": movies_db,
+        "movies_tmdb": movies_tmdb,
     }
-    return render(request, 'movies/movie_list.html', context)
+    return render(request, "movies/movie_list.html", context)
 
 
 
@@ -105,33 +101,38 @@ def movie_details(request, pk):
 
 
 
-
+# TODO
 # List of all actors (mock data)
 def actor_list(request):
-    query = request.GET.get('q')  # Suchbegriff aus dem Query-String
-    category = request.GET.get('category')  # Kategorie aus dem Dropdown-Menü
+    query = request.GET.get('q', '').strip()  # Suchbegriff
+    category = request.GET.get('category', 'actor')  # Standardkategorie "movie"
 
-    actors = Actor.objects.all()  # Alle Schauspieler aus der Datenbank abrufen
+    # Datenbankabfragen
+    actors_db = Actor.objects.none()
+
+    # TMDB-Abfragen
+    actors_tmdb = []
 
     if query:
-        if category == "actor":
-            actors = actors.filter(
+            # Lokale Schauspieler filtern
+            actors_db = Actor.objects.filter(
                 Q(name__icontains=query) | Q(surname__icontains=query)
-            )
-        elif category == "director":
-            directors = Director.objects.filter(
-                Q(name__icontains=query) | Q(surname__icontains=query)
-            )
-        elif category == "genre":
-            movies = Movie.objects.filter(genre__icontains=query)
+            ).order_by('name')  # Sortiere nach Namen (alphabetisch)
+            # TMDB-Personen suchen
+            tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
+            actors_tmdb = [
+                person for person in tmdb_response.get("results", [])
+                if person.get("known_for_department") == "Acting"
+            ]
 
     context = {
-        'actors': actors,
-        'query': query,
-        'category': category,
+        "query": query,
+        "category": category,
+        "actors_db": actors_db,
+        "actors_tmdb": actors_tmdb,
     }
-
     return render(request, "actors/actor_list.html", context)
+
 
 # Details of a specific actor
 def actor_details(request, pk):
@@ -152,33 +153,38 @@ def actor_details(request, pk):
 
 
 
-
+# TODO
 # List of all directors (mock data)
 def director_list(request):
-    query = request.GET.get('q')  # Suchbegriff aus dem Query-String
-    category = request.GET.get('category')  # Kategorie aus dem Dropdown-Menü
+    query = request.GET.get('q', '').strip()  # Suchbegriff
+    category = request.GET.get('category', 'director')  # Standardkategorie "movie"
 
-    directors = Director.objects.all()  # Alle Directors aus der Datenbank abrufen
+    # Datenbankabfragen
+    directors_db = Director.objects.none()
+
+    # TMDB-Abfragen
+    directors_tmdb = []
 
     if query:
-        if category == "actor":
-            actors = actors.filter(
+            # Lokale Regisseure filtern
+            directors_db = Director.objects.filter(
                 Q(name__icontains=query) | Q(surname__icontains=query)
             )
-        elif category == "director":
-            directors = Director.objects.filter(
-                Q(name__icontains=query) | Q(surname__icontains=query)
-            )
-        elif category == "genre":
-            movies = Movie.objects.filter(genre__icontains=query)
+            # TMDB-Personen suchen
+            tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
+            directors_tmdb = [
+                person for person in tmdb_response.get("results", [])
+                if person.get("known_for_department") == "Directing"
+            ]
 
     context = {
-        'directors': directors,
-        'query': query,
-        'category': category,
+        "query": query,
+        "category": category,
+        "directors_db": directors_db,
+        "directors_tmdb": directors_tmdb,
     }
-
     return render(request, "directors/director_list.html", context)
+
 
 # Details of a specific director 
 def director_details(request, pk):
