@@ -26,7 +26,8 @@ urlpatterns = [
 
     # Authentication URLs
     path("signup/", views.signup, name="signup"),  # Signup page
-    path("login/", views.login, name="user_login"),      # Login page
+    path("login/", views.user_login, name="user_login"),      # Login page
+    path("logout/", views.user_logout, name="logout"),  # Logout path
 
     # Create page (for adding new movies, actors, directors)
     path("create/", views.create, name="create"),

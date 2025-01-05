@@ -1,9 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import Movie, Actor, Director
 from .forms import ActorForm, DirectorForm, MovieForm
 from .utils.tmdb import fetch_tmdb_data
-import requests
+from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth.models import User 
 
 # Create your views here.
 
@@ -207,13 +210,50 @@ def director_details(request, pk):
 
 
 
-# Login Page
-def login(request):
-    return render(request, "auth/login.html")
+# Login Page (renamed to user_login to avoid conflict with built-in login function)
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Log the user in using Django's built-in login function
+            auth_login(request, user)
+            messages.success(request, "You have logged in successfully!")
+            return redirect('IMBD_app:home')  # Redirect to home page or another view
+        else:
+            # Check if the username exists
+            if not User.objects.filter(username=username).exists():
+                messages.error(request, "Username not found.")
+            else:
+                messages.error(request, "Incorrect password.")
+    return render(request, 'auth/login.html')
 
 # Signup Page
 def signup(request):
-    return render(request, "auth/signup.html")
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password1']
+        confirm_password = request.POST['password2']
+
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken.")
+        elif password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+        else:
+            # Create new user
+            user = User.objects.create_user(username=username, password=password)
+            user.save()
+            messages.success(request, "Account created successfully!")
+            return redirect('user_login')  # Redirect to login page after successful signup
+    return render(request, 'auth/signup.html')
+
+# Logout
+def user_logout(request):
+    logout(request)
+    return redirect('IMBD_app:home')  # Redirect to the home page after logout
 
 
 

@@ -75,14 +75,52 @@
                 <span class="relative">Categories</span>
             </button>
 
-            <!-- Sign Up Button -->
+            <!-- Account Dropdown Section -->
             <div class="relative">
                 <button  
-                    class="relative px-4 py-2 text-sm font-semibold text-text-white bg-dark-purple rounded-md group overflow-hidden hover:bg-hover-button  transition-all duration-300">
-                    <span class="absolute inset-0 border-2 border-dark-purple rounded-md transition-all duration-300 group-hover:border-hover-button "></span>
-                    <span class="relative"><a href="/login/">Login</a></span>
+                    id="account-dropdown-button"
+                    class="relative px-4 py-2 text-sm font-semibold text-text-white bg-dark-purple rounded-md group overflow-hidden hover:bg-hover-button transition-all duration-300">
+                    <span class="absolute inset-0 border-2 border-dark-purple rounded-md transition-all duration-300 group-hover:border-hover-button"></span>
+                    <span class="relative">
+                        {% if user.is_authenticated %}
+                            {{ user.username }}
+                        {% else %}
+                            Account
+                        {% endif %}
+                    </span>
                 </button>
+
+                <!-- Dropdown Menu -->
+                <div id="account-dropdown-menu" class="absolute right-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg w-40 hidden">
+                    <ul class="py-1 text-gray-700">
+                        {% if user.is_authenticated %}
+                            <!-- Logout Option -->
+                            <li>
+                                <a href="/logout" class="block px-4 py-2 text-sm hover:bg-gray-100">Logout</a>
+                            </li>
+                        {% else %}
+                            <!-- Login Option -->
+                            <li>
+                                <a href="/login" class="block px-4 py-2 text-sm hover:bg-gray-100">Login</a>
+                            </li>
+                            <!-- Signup Option -->
+                            <li>
+                                <a href="/signup" class="block px-4 py-2 text-sm hover:bg-gray-100">Signup</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
+
+            <script>
+                const accountButton = document.getElementById('account-dropdown-button');
+                const accountDropdownMenu = document.getElementById('account-dropdown-menu');
+
+                accountButton.addEventListener('click', () => {
+                    accountDropdownMenu.classList.toggle('hidden');
+                });
+            </script>
+
         </div>
         </div>
 

@@ -1,14 +1,36 @@
 {% extends 'base.html' %} 
 
-        {% block title %} Login {% endblock %}
+{% block title %} Login {% endblock %}
     
-            {% block main%}
-            <br>
-            <br>
-            <br>
-            <br>
-            GOTTA LOCK IN MF
+{% block main%}
+<div class="flex justify-center items-center min-h-screen bg-purple-200">
+    <div class="w-full max-w-sm bg-footer-purple p-8 rounded-lg shadow-md">
+        <h2 class="text-center text-2xl text-text-white font-semibold mb-6">Login</h2>
 
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <p class="text-text-white">{{ message }}</p>
+                </div>
+            {% endfor %}
+        </div>
 
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="username" class="block text-text-white">Username:</label>
+                <input type="text" id="username" name="username" class="w-full p-3 bg-f-lighter-purple text-text-white border border-f-border-purple rounded-lg mb-4" placeholder="Enter your username" required>
+            </div>
+            <div>
+                <label for="password" class="block text-text-white">Password:</label>
+                <input type="password" id="password" name="password" class="w-full p-3 bg-f-lighter-purple text-text-white border border-f-border-purple rounded-lg mb-4" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="w-full bg-submit-button hover:bg-hover-button text-text-white font-semibold py-3 rounded-lg">Login</button>
+        </form>
+        <div class="text-center mt-4 text-text-white">
+            Don't have an account? <a href="/signup" class="text-hover-button">Sign up</a>
+        </div>
+    </div>
+</div>
 
-            {% endblock main%}
+{% endblock main%}
