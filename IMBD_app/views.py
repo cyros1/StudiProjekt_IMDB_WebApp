@@ -46,23 +46,26 @@ def fetch_movie_credits(movie_id):
     return fetch_tmdb_data(f"movie/{movie_id}/credits", params={"language": "en-US"})
 
 # Details of a specific movie 
-def movie_details(request, pk):
-    # Check if the movie exists in the database using the TMDb ID (pk is the TMDb ID here)
-    movie = Movie.objects.filter(tmdb_id=pk).first()
+# In views.py
+def movie_details(request, tmdb_id):
+    movie = Movie.objects.filter(tmdb_id=tmdb_id).first()
 
     if not movie:
-        # If the movie is not in the database, fetch it from TMDb and store it
-        movie = fetch_movie_from_tmdb(pk)
+        movie = fetch_movie_from_tmdb(tmdb_id)  # Ensure you fetch movie from the API if not found in DB
 
-    # Fetch the top actors and directors from the database
-    top_actors = movie.movie_actors.all()[:5]  # Get the first 5 actors
-    directors = movie.directors.all()  # Get directors for the movie
+    genres = movie.genres.all()
+    directors = movie.directors.all()
+    top_actors = movie.movie_actors.all()[:5]
 
     return render(request, "movies/movie_details.html", {
         "movie": movie,
-        "cast": top_actors,
-        "directors": directors,
+        "genres": genres if genres else ["No Genre Information Available"],
+        "directors": directors if directors else ["No Director Information Available"],
+        "cast": top_actors if top_actors else ["No Actor Information Available"],
     })
+
+
+
 
 
 
@@ -77,6 +80,9 @@ def actor_details(request, pk):
         # Fetch and store actor in the database if not found
         actor = fetch_actor_from_tmdb(pk)
 
+    if not actor:  # If actor is still None, handle gracefully
+        actor = Actor(name="Unknown Actor", biography="Biography not available")
+    
     # Get the top movies the actor is known for with prefetch_related to fetch genres, directors, and actors
     top_movies = actor.known_for_movies.prefetch_related(
         'genres',  # Prefetch genres related to the movie
@@ -88,6 +94,7 @@ def actor_details(request, pk):
         "actor": actor,
         "top_movies": top_movies,
     })
+
 
 
 
@@ -258,24 +265,24 @@ def success(request):
 # alles für search bar
 
 def movie_list(request):
-    query = request.GET.get('q', '').strip()  # Suchbegriff
-    category = request.GET.get('category', 'movie')  # Standardkategorie "movie"
+    query = request.GET.get('q', '').strip()  # Search term
+    category = request.GET.get('category', 'movie')  # Default category: "movie"
 
-    # Datenbankabfragen
+    # Query local database
     movies_db = Movie.objects.none()
 
-    # TMDB-Abfragen
+    # Fetch movies from TMDb
     movies_tmdb = []
 
     if query:
-            # Lokale Filme filtern
-            movies_db = Movie.objects.filter(
-                Q(title__icontains=query) | Q(genres__name__icontains=query)
-            ).distinct()
-            # TMDB-Filme suchen
-            tmdb_response = fetch_tmdb_data("search/movie", params={"query": query})
-            movies_tmdb = tmdb_response.get("results", [])
+        # Filter local movies
+        movies_db = Movie.objects.filter(
+            Q(title__icontains=query) | Q(genres__name__icontains=query)
+        ).distinct()
 
+        # Search movies on TMDb
+        tmdb_response = fetch_tmdb_data("search/movie", params={"query": query})
+        movies_tmdb = tmdb_response.get("results", [])
 
     context = {
         "query": query,
@@ -284,6 +291,7 @@ def movie_list(request):
         "movies_tmdb": movies_tmdb,
     }
     return render(request, "movies/movie_list.html", context)
+
 
 
 # List of all directors (mock data)

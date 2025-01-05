@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}IMBD Home{% endblock %}
+{% block title %}Homepage{% endblock %}
 
 {% load static %}
 
@@ -28,34 +28,25 @@
             </div>
 
             <!-- Search Bar -->
-            <div id="home_search-bar" class="search-bar-container transition-all duration-500 ease-in-out">
-                <form id="searchForm" method="get" action="{% url 'IMBD_app:movie_list' %}" style="display: flex; gap: 10px;">
-                    <input type="text" name="q" placeholder="Search..." value="{{ query }}" class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    
-                    <select id="categorySelect" name="category" class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="movie" {% if category == "movie" %}selected{% endif %}> Movies </option>
-                        <option value="actor" {% if category == "actor" %}selected{% endif %}>Actors</option>
-                        <option value="director" {% if category == "director" %}selected{% endif %}>Directors</option>
-                        <option value="genre" {% if category == "genre" %}selected{% endif %}>Genre</option>
-                    </select>
-                </form>
+                <div id="search-bar" class="search-bar-container transition-all duration-500 ease-in-out">
 
-                <script>
-                    // URLs für die verschiedenen Kategorien definieren
-                    const urls = {
-                        movie: "{% url 'IMBD_app:movie_list' %}",
-                        actor: "{% url 'IMBD_app:actor_list' %}",
-                        director: "{% url 'IMBD_app:director_list' %}"
-                    };
+                    {% comment %} Alter Search Bar Code damit mich Lukas nicht lyncht:
+                    <form method="get" action="{% url 'IMBD_app:movie_list' %}">
+                        <input name='q' type="text" placeholder="Search..." class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </form> 
+                    {% endcomment %}
+
+                    <form method="get" action="{% url 'IMBD_app:movie_list' %}" style="display: flex; gap: 10px;">
+                        <input type="text" name="q" placeholder="Search..." value="{{ query }}" class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        
+                        <select name="category" class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="movie" {% if category == "movie" %}selected{% endif %}>Movies</option>
+                            <option value="actor" {% if category == "actor" %}selected{% endif %}>Actors</option>
+                            <option value="director" {% if category == "director" %}selected{% endif %}>Directors</option>
+                            <option value="genre" {% if category == "genre" %}selected{% endif %}>Genre</option>
+                        </select>
+                    </form>
                     
-                    const form = document.getElementById('searchForm');
-                    const categorySelect = document.getElementById('categorySelect');
-                    
-                    categorySelect.addEventListener('change', (event) => {
-                        const selectedCategory = event.target.value;
-                        form.action = urls[selectedCategory] || urls['movie']; // Standard: movie
-                    });
-                </script>
             </div>
         </div>
     </div>
@@ -137,7 +128,7 @@
         const topBar = document.getElementById('top-bar');
         const logo = document.getElementById('logo');
         const topBarLogo = document.getElementById('top-bar-logo');
-        const homeSearchBar = document.getElementById('home_search-bar');
+        const searchBar = document.getElementById('search-bar');
         const topBarSearch = document.getElementById('top-bar-search');
 
         window.addEventListener('scroll', () => {
@@ -157,7 +148,7 @@
             // Shrink logo and move search bar to the top bar
             const logoScale = Math.max(0.5, 1 - scrollY / 500); // Adjust scale factor as needed
             logo.style.transform = `scale(${logoScale})`;
-            homeSearchBar.style.opacity = `${Math.max(0, 1 - scrollY / 100)}`; // Fade out search bar
+            searchBar.style.opacity = `${Math.max(0, 1 - scrollY / 100)}`; // Fade out search bar
         });
     </script>
 </div>

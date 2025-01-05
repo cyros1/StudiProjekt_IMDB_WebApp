@@ -13,8 +13,8 @@
         <!-- Movie Details -->
         <div class="p-6 space-y-4">
             <h1 class="text-4xl font-bold text-text-white">{{ movie.title }}</h1>
-            <p class="text-text-white">Release Date: <span class="font-medium text-search-bar-purple">{{ movie.release_date }}</span></p>
-            <p class="text-text-white">{{ movie.overview }}</p>
+            <p class="text-text-white">Release Date: <span class="font-medium text-search-bar-purple">{{ movie.release_date|default:"No information available" }}</span></p>
+            <p class="text-text-white">{{ movie.overview|default:"No information available" }}</p>
         </div>
 
         <!-- Additional Info -->
@@ -22,25 +22,48 @@
             <h2 class="text-2xl font-semibold text-text-white mb-3">Additional Information</h2>
             <ul class="space-y-2">
                 <li>
-                    <strong class="text-search-bar-purple">Director:</strong> 
-                    {% for director in directors %}
-                        <a href="{% url 'IMBD_app:director_details' director.id %}" class="text-blue-500 hover:underline">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
+                    <strong class="text-search-bar-purple">Director:</strong>
+                    {% if directors %}
+                        {% for director in directors %}
+                            {% if director.tmdb_id %}
+                                <a href="{% url 'IMBD_app:director_details' director.tmdb_id %}" class="text-blue-500 hover:underline">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
+                            {% else %}
+                                <span>No information available</span>{% if not forloop.last %}, {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <span>No information available</span>
+                    {% endif %}
                 </li>
                 <li>
-                    <strong class="text-search-bar-purple">Top Actors:</strong>
-                    {% for movie_actor in cast %}
-                        <a href="{% url 'IMBD_app:actor_details' movie_actor.actor.id %}" class="text-blue-500 hover:underline">{{ movie_actor.actor.name }}</a>{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </li>                
-                <li>
-                    <strong class="text-search-bar-purple">Genre:</strong> 
-                    {% for genre in movie.genres.all %}
-                        <span>{{ genre.name }}{% if not forloop.last %}, {% endif %}</span>
-                    {% endfor %}
+                    <strong>Top Actors:</strong>
+                    {% if cast %}
+                        {% for movie_actor in cast %}
+                            {% if movie_actor.actor.tmdb_id %}
+                                <a href="{% url 'IMBD_app:actor_details' movie_actor.actor.tmdb_id %}" class="text-blue-500 hover:underline">
+                                    {{ movie_actor.actor.name }}
+                                </a>
+                                {% if not forloop.last %}, {% endif %}
+                            {% else %}
+                                <span>No information available</span>{% if not forloop.last %}, {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <span>No information available</span>
+                    {% endif %}
                 </li>
                 <li>
-                    <strong class="text-search-bar-purple">Rating:</strong> {{ movie.rating }} / 10
+                    <strong class="text-search-bar-purple">Genre:</strong>
+                    {% if movie.genres.all %}
+                        {% for genre in movie.genres.all %}
+                            <span>{{ genre.name }}{% if not forloop.last %}, {% endif %}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span>No information available</span>
+                    {% endif %}
+                </li>
+                <li>
+                    <strong class="text-search-bar-purple">Rating:</strong> {{ movie.rating|default:"No information available" }} / 10
                 </li>
             </ul>
         </div>

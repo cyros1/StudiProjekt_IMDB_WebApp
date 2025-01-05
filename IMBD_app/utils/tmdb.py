@@ -3,8 +3,8 @@ from django.utils.timezone import now
 from ..models import Movie, Genre, Actor, Director, CachedData, MovieActor
 import requests
 
-BASE_URL = "https://api.themoviedb.org/3"
 API_KEY = "2af4d814ca966334015aa4ea035219e7"
+BASE_URL = "https://api.themoviedb.org/3"
 
 def fetch_tmdb_data(endpoint, params=None):
     """
@@ -31,56 +31,65 @@ def fetch_movie_from_tmdb(movie_id):
     url = f"{BASE_URL}/movie/{movie_id}"
     params = {"api_key": API_KEY, "append_to_response": "credits"}
     response = requests.get(url, params=params)
+
     if response.status_code == 200:
         movie_data = response.json()
 
+        # Handle case where Date from api = ""
+        release_date = movie_data.get("release_date") or None
+
         # Create or update the movie
         movie, created = Movie.objects.update_or_create(
-            tmdb_id=movie_data["id"],
+            tmdb_id=movie_data.get("id"),
             defaults={
-                "title": movie_data["title"],
-                "release_date": movie_data["release_date"],
-                "backdrop_path": movie_data["backdrop_path"],
-                "overview": movie_data["overview"],
-                "rating": movie_data["vote_average"],
+                "title": movie_data.get("title", "No Title Available"),
+                "release_date": release_date,
+                "backdrop_path": movie_data.get("backdrop_path", ""),
+                "overview": movie_data.get("overview", "No Overview Available"),
+                "rating": movie_data.get("vote_average", 0),
                 "cached_at": now()
             }
         )
 
         # Update genres
+        movie.genres.clear()
         for genre_data in movie_data.get("genres", []):
-            genre, _ = Genre.objects.get_or_create(name=genre_data["name"])
+            genre, _ = Genre.objects.get_or_create(name=genre_data.get("name", "Unknown Genre"))
             movie.genres.add(genre)
 
         # Update directors
+        movie.directors.clear()
         credits = movie_data.get("credits", {})
         for crew in credits.get("crew", []):
             if crew["job"] == "Director":
                 director, _ = Director.objects.update_or_create(
-                    tmdb_id=crew["id"],
-                    defaults={"name": crew["name"], "profile_path": crew["profile_path"]}
+                    tmdb_id=crew.get("id"),
+                    defaults={"name": crew.get("name", "No Name Available"), "profile_path": crew.get("profile_path", "")}
                 )
                 movie.directors.add(director)
 
-        # Update actors and associate them with the movie
-        # Update actors
+        # Update actors and roles
+        movie.movie_actors.all().delete()
         top_actors = credits.get("cast", [])[:5]
         for actor_data in top_actors:
             actor, _ = Actor.objects.update_or_create(
-                tmdb_id=actor_data["id"],
+                tmdb_id=actor_data.get("id"),
                 defaults={
-                    "name": actor_data["name"],
-                    "profile_path": actor_data["profile_path"]
+                    "name": actor_data.get("name", "No Name Available"),
+                    "profile_path": actor_data.get("profile_path", "")
                 }
             )
-            # Create the MovieActor association
-            MovieActor.objects.update_or_create(movie=movie, actor=actor)
+            MovieActor.objects.create(
+                movie=movie,
+                actor=actor,
+                role=actor_data.get("character", "No Role Available")
+            )
 
-
-        movie.save()  # Save the movie after updating everything
+        movie.save()
         return movie
     else:
         response.raise_for_status()
+
 
 
 
@@ -153,13 +162,17 @@ def fetch_actor_from_tmdb(actor_id):
     if response.status_code == 200:
         actor_data = response.json()
 
+        # Ensure there is valid actor data
+        if not actor_data.get("name"):
+            return None
+
         # Create or update actor in the database
         actor, created = Actor.objects.update_or_create(
             tmdb_id=actor_data["id"],
             defaults={
                 "name": actor_data["name"],
-                "profile_path": actor_data["profile_path"],
-                "biography": actor_data["biography"]
+                "profile_path": actor_data.get("profile_path", ""),
+                "biography": actor_data.get("biography", "Biography not available")
             }
         )
 
@@ -187,4 +200,6 @@ def fetch_actor_from_tmdb(actor_id):
     else:
         print(f"Error fetching actor data: {response.status_code}")
         return None
+
+
 

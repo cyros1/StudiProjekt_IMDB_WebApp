@@ -1,35 +1,38 @@
 {% extends 'base.html' %} 
 {% load static %}
 
-        {% block main%}
+{% block main %}
 
-        <br>
-        <br>
-        <br>
-        <br>
-        <h1>Movie List</h1>
-        <ul>
-    <h2>Search Results for "{{ query }}" in {{ category|title }}</h2>
+<br><br><br><br>
+<h1>Movie List</h1>
+<h2>Search Results for "{{ query }}" in {{ category|title }}</h2>
 
-    <h3>Local Movies</h3>
+<!-- Local Movies -->
+<h3>Local Movies</h3>
+<ul>
     {% for movie in movies_db %}
         <div>
-            <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.id %}">{{ movie.title }}</a></h4>
-            {% comment %} <p>Genre: {{ movie.genre }}</p> {% endcomment %}
+            <!-- Use local database ID -->
+            <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.tmdb_id %}">{{ movie.title }}</a></h4>
         </div>
     {% empty %}
         <p>No local movies found.</p>
     {% endfor %}
-    <br>
-    <br>
-    <h3>TMDB Movies</h3>
+</ul>
+
+<br><br>
+
+<!-- TMDB Movies -->
+<h3>TMDB Movies</h3>
+<ul>
     {% for movie in movies_tmdb %}
         <div>
+            <!-- Use TMDB ID -->
             <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.id %}">{{ movie.title }}</a></h4>
-            {% comment %} <p>Genre: {{ movie.genre }}</p> {% endcomment %}
         </div>
     {% empty %}
         <p>No TMDB movies found.</p>
     {% endfor %}
+</ul>
 
-{% endblock main%}
+{% endblock %}

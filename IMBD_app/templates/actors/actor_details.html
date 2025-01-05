@@ -24,8 +24,8 @@
             <ul class="space-y-2">
                 {% if top_movies %}
                     {% for movie in top_movies %}
-                        <!-- Use the TMDb ID for the movie link -->
-                        <li><a href="/movies/{{ movie.tmdb_id }}" class="text-search-bar-purple">{{ movie.title }}</a></li>
+                        <!-- Use the tmdb_id for the movie link -->
+                        <li><a href="/movies/{{ movie.id }}" class="text-search-bar-purple">{{ movie.title }}</a></li>
                     {% endfor %}
                 {% else %}
                     <li>No top movies available for this actor.</li>
