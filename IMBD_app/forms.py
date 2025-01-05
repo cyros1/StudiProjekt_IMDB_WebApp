@@ -5,21 +5,27 @@ from .models import Movie, Actor, Director, UserComment, UserRating, Genre
 class ActorForm(forms.ModelForm):
     class Meta:
         model = Actor
-        fields = ['name', 'biography', 'profile_path']
+        fields = ['name', 'biography', 'profile_path', 'custom_profile_image']
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-field',
-                'placeholder': 'Enter actor name',
-            }),
-            'biography': forms.Textarea(attrs={
-                'class': 'form-field',
-                'placeholder': 'Write a short biography',
-            }),
-            'profile_path': forms.URLInput(attrs={
-                'class': 'form-field',
-                'placeholder': 'Enter profile image URL',
-            }),
+            'name': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter actor name'}),
+            'biography': forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Write a short biography'}),
+            'profile_path': forms.URLInput(attrs={'class': 'form-field', 'placeholder': 'Enter profile image URL'}),
+            'custom_profile_image': forms.ClearableFileInput(attrs={'class': 'form-field'}),  # File input widget
         }
+
+    def save(self, commit=True):
+        actor = super().save(commit=False)
+        
+        # If there's a custom profile image, use it and clear the profile_path
+        if self.cleaned_data.get('custom_profile_image'):
+            actor.profile_path = None
+            actor.custom_profile_image = self.cleaned_data['custom_profile_image']
+        
+        if commit:
+            actor.save()
+        return actor
+
+
 
 
 class DirectorForm(forms.ModelForm):
@@ -96,7 +102,7 @@ class UserRatingForm(forms.ModelForm):
         fields = ['rating']
         widgets = {
             'rating': forms.NumberInput(attrs={
-                'class': 'form-field bg-footer-purple text-text-white',
+                'class': 'form-field',
                 'min': 0,
                 'max': 10,
                 'step': 0.1,

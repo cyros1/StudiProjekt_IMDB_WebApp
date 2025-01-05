@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
 
 
 class Genre(models.Model):
@@ -23,14 +24,29 @@ class Movie(models.Model):
 
 
 class Actor(models.Model):
-    tmdb_id = models.IntegerField(unique=True)
+    tmdb_id = models.IntegerField(unique=True, null=True, blank=True)  # Allow null for custom entries
     name = models.CharField(max_length=255)
-    profile_path = models.CharField(max_length=255, null=True, blank=True)  # Path to profile picture
+    profile_path = models.CharField(max_length=255, null=True, blank=True)  # For TMDb API paths
+    custom_profile_image = models.ImageField(
+        upload_to='actors/',
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])],
+    )
     biography = models.TextField(null=True, blank=True)
-    known_for_movies = models.ManyToManyField(Movie, related_name="featured_actors", blank=True)  # Top 5 movies
+    known_for_movies = models.ManyToManyField(Movie, related_name="featured_actors", blank=True)
     cached_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def get_profile_picture(self):
+        if self.custom_profile_image:
+            return self.custom_profile_image.url  # Local uploaded image
+        elif self.profile_path:
+            return f'https://image.tmdb.org/t/p/w500{self.profile_path}'  # TMDb image
+        return '/static/images/default-profile.png'  # Default fallback
+
+
 
 
 class Director(models.Model):

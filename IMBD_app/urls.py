@@ -35,6 +35,7 @@ urlpatterns = [
 
     path('all_movies/', views.all_movies, name='all_movies'),
     path('recent_movies/', views.recent_movies, name='recent_movies'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 

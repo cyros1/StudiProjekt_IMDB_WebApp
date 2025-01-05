@@ -282,7 +282,6 @@ def create(request):
     movie_form = MovieForm()
 
     if request.method == 'POST':
-        # Formulartyp aus den POST-Daten lesen
         form_type = request.POST.get('form_type')
         print(f"Form type received: {form_type}")  # Debugging-Ausgabe
 
@@ -291,31 +290,44 @@ def create(request):
             if actor_form.is_valid():
                 actor_form.save()
                 print("Actor created successfully!")  # Debugging-Ausgabe
-                return render(request, 'success.html')  # Erfolgsseite
+                messages.success(request, "Actor created successfully!")
+                return redirect('IMBD_app:create')  # Redirect to actor list or another page
             else:
+                # Debugging: Print out form errors
                 print("ERROR: Actor couldn't be created")
+                print(actor_form.errors)
+                messages.error(request, "Error creating actor. Please check the form.")
+        
         elif form_type == 'director':
             director_form = DirectorForm(request.POST, request.FILES)
             if director_form.is_valid():
                 director_form.save()
                 print("Director created successfully!")  # Debugging-Ausgabe
-                return render(request, 'success.html')  # Erfolgsseite
+                messages.success(request, "Director created successfully!")
+                return redirect('director_list')  # Redirect to director list or another page
             else:
                 print("ERROR: Director couldn't be created")
+                print(director_form.errors)
+                messages.error(request, "Error creating director. Please check the form.")
+        
         elif form_type == 'movie':
             movie_form = MovieForm(request.POST, request.FILES)
             if movie_form.is_valid():
                 movie_form.save()
                 print("Movie created successfully!")  # Debugging-Ausgabe
-                return render(request, 'success.html')  # Erfolgsseite
+                messages.success(request, "Movie created successfully!")
+                return redirect('movie_list')  # Redirect to movie list or another page
             else:
                 print("ERROR: Movie couldn't be created")
-            
+                print(movie_form.errors)
+                messages.error(request, "Error creating movie. Please check the form.")
+
     return render(request, 'create.html', {
         'actor_form': actor_form,
         'director_form': director_form,
         'movie_form': movie_form,
     })
+
 
 def success(request):
     return render(request, "success.html")
