@@ -28,44 +28,53 @@ class ActorForm(forms.ModelForm):
 
 
 
+
 class DirectorForm(forms.ModelForm):
     class Meta:
         model = Director
-        fields = ['name', 'biography', 'profile_path']
+        fields = ['name', 'biography', 'profile_path', 'custom_profile_image']
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-field',
-                'placeholder': 'Enter director name',
-            }),
-            'biography': forms.Textarea(attrs={
-                'class': 'form-field',
-                'placeholder': 'Write a short biography',
-            }),
-            'profile_path': forms.URLInput(attrs={
-                'class': 'form-field',
-                'placeholder': 'Enter profile image URL',
-            }),
+            'name': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter director name'}),
+            'biography': forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Write a short biography'}),
+            'profile_path': forms.URLInput(attrs={'class': 'form-field', 'placeholder': 'Enter profile image URL'}),
+            'custom_profile_image': forms.ClearableFileInput(attrs={'class': 'form-field'}),  # File input widget
         }
+
+    def save(self, commit=True):
+        director = super().save(commit=False)
+        if self.cleaned_data.get('custom_profile_image'):
+            director.profile_path = None
+            director.custom_profile_image = self.cleaned_data['custom_profile_image']
+        if commit:
+            director.save()
+        return director
+
 
 
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
-        fields = ['tmdb_id', 'title', 'release_date', 'backdrop_path', 'overview', 'rating', 'genres', 'directors', 'is_custom']
-    
-    # Custom form field for adding actors (based on MovieActor)
-    actors = forms.ModelMultipleChoiceField(queryset=Actor.objects.all(), required=False)
+        fields = ['tmdb_id', 'title', 'release_date', 'backdrop_path', 'custom_backdrop_image', 'overview', 'rating', 'genres', 'directors', 'is_custom']
+        widgets = {
+            'tmdb_id': forms.NumberInput(attrs={'class': 'form-field', 'placeholder': 'Enter TMDb ID'}),
+            'title': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter movie title'}),
+            'release_date': forms.DateInput(attrs={'class': 'form-field', 'placeholder': 'Enter release date'}),
+            'backdrop_path': forms.URLInput(attrs={'class': 'form-field', 'placeholder': 'Enter backdrop URL'}),
+            'custom_backdrop_image': forms.ClearableFileInput(attrs={'class': 'form-field'}),  # File input widget
+            'overview': forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Write a short overview'}),
+            'rating': forms.NumberInput(attrs={'class': 'form-field', 'placeholder': 'Enter rating'}),
+            'genres': forms.SelectMultiple(attrs={'class': 'form-field'}),
+            'directors': forms.SelectMultiple(attrs={'class': 'form-field'}),
+            'is_custom': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
     def save(self, commit=True):
         movie = super().save(commit=False)
+        if self.cleaned_data.get('custom_backdrop_image'):
+            movie.backdrop_path = None
+            movie.custom_backdrop_image = self.cleaned_data['custom_backdrop_image']
         if commit:
             movie.save()
-
-        # Add the selected actors to the MovieActor model
-        actors = self.cleaned_data.get('actors', [])
-        for actor in actors:
-            Actor.objects.create(movie=movie, actor=actor)
-        
         return movie
 
 

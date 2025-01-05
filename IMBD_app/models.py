@@ -9,18 +9,34 @@ class Genre(models.Model):
 
 
 class Movie(models.Model):
-    tmdb_id = models.IntegerField(unique=True)  # TMDb Movie ID
+    tmdb_id = models.IntegerField(unique=True, null=True, blank=True)  # Allow null for custom entries
     title = models.CharField(max_length=255)
     release_date = models.DateField(null=True, blank=True)
-    backdrop_path = models.CharField(max_length=255, null=True, blank=True)  # Path to backdrop image
+    backdrop_path = models.CharField(max_length=255, null=True, blank=True)  # Path to backdrop image (TMDb)
+    custom_backdrop_image = models.ImageField(  # Neues Feld für benutzerdefinierte Backdrops
+        upload_to='movies/backdrops/',
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])],
+    )
     overview = models.TextField(null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)  # Average TMDb rating
     genres = models.ManyToManyField(Genre, related_name="movies")  # Many-to-Many relationship with Genre
     directors = models.ManyToManyField('Director', related_name="movies")  # Many-to-Many with Director
-    cached_at = models.DateTimeField(auto_now_add=True)  # Last time the movie was fetched
     is_custom = models.BooleanField(default=False)  # Flag for custom movies (not from TMDb)
+    cached_at = models.DateTimeField(auto_now_add=True)  # Last time the movie was fetched
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def get_backdrop_image(self):
+        """
+        Returns the URL for the backdrop image. Prioritizes custom images over TMDb paths.
+        """
+        if self.custom_backdrop_image:
+            return self.custom_backdrop_image.url  # Local uploaded image
+        elif self.backdrop_path:
+            return f'https://image.tmdb.org/t/p/w500{self.backdrop_path}'  # TMDb image
+        return '/static/images/default-backdrop.png'  # Default fallback
 
 
 class Actor(models.Model):
@@ -48,16 +64,31 @@ class Actor(models.Model):
 
 
 
-
 class Director(models.Model):
-    tmdb_id = models.IntegerField(unique=True)
+    tmdb_id = models.IntegerField(unique=True, null=True, blank=True)  # Allow null for custom entries
     name = models.CharField(max_length=255)
-    profile_path = models.CharField(max_length=255, null=True, blank=True)  # Path to profile picture
+    profile_path = models.CharField(max_length=255, null=True, blank=True)  # TMDb profile path
+    custom_profile_image = models.ImageField(  # Neues Feld für benutzerdefinierte Profilbilder
+        upload_to='directors/',
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])],
+    )
     biography = models.TextField(null=True, blank=True)
-    known_for_movies = models.ManyToManyField(Movie, related_name="featured_directors", blank=True)  # Top 5 movies
+    known_for_movies = models.ManyToManyField(Movie, related_name="featured_directors", blank=True)
     cached_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def get_profile_picture(self):
+        """
+        Returns the URL for the profile picture. Prioritizes custom images over TMDb paths.
+        """
+        if self.custom_profile_image:
+            return self.custom_profile_image.url  # Local uploaded image
+        elif self.profile_path:
+            return f'https://image.tmdb.org/t/p/w500{self.profile_path}'  # TMDb image
+        return '/static/images/default-profile.png'  # Default fallback
 
 
 class MovieActor(models.Model):

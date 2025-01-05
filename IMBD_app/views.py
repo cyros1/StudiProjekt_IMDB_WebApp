@@ -304,7 +304,7 @@ def create(request):
                 director_form.save()
                 print("Director created successfully!")  # Debugging-Ausgabe
                 messages.success(request, "Director created successfully!")
-                return redirect('director_list')  # Redirect to director list or another page
+                return redirect('IMBD_app:create')  # Redirect to director list or another page
             else:
                 print("ERROR: Director couldn't be created")
                 print(director_form.errors)
@@ -316,7 +316,7 @@ def create(request):
                 movie_form.save()
                 print("Movie created successfully!")  # Debugging-Ausgabe
                 messages.success(request, "Movie created successfully!")
-                return redirect('movie_list')  # Redirect to movie list or another page
+                return redirect('IMBD_app:create')  # Redirect to movie list or another page
             else:
                 print("ERROR: Movie couldn't be created")
                 print(movie_form.errors)
