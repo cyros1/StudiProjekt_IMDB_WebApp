@@ -24,13 +24,13 @@
                 <li>
                     <strong class="text-search-bar-purple">Director:</strong> 
                     {% for director in directors %}
-                        <span>{{ director.name }}{% if not forloop.last %}, {% endif %}</span>
+                        <a href="{% url 'IMBD_app:director_details' director.id %}" class="text-blue-500 hover:underline">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </li>
                 <li>
                     <strong class="text-search-bar-purple">Top Actors:</strong>
                     {% for movie_actor in cast %}
-                        <span>{{ movie_actor.actor.name }}{% if not forloop.last %}, {% endif %}</span>
+                        <a href="{% url 'IMBD_app:actor_details' movie_actor.actor.id %}" class="text-blue-500 hover:underline">{{ movie_actor.actor.name }}</a>{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </li>                
                 <li>

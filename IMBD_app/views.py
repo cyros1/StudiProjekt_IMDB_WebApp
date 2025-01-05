@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .models import Movie, Actor, Director
+from .models import Genre, Movie, Actor, Director
 from .forms import ActorForm, DirectorForm, MovieForm
 from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb, fetch_director_from_tmdb, fetch_actor_from_tmdb
 from django.contrib import messages
@@ -164,6 +164,33 @@ def user_logout(request):
     logout(request)
     return redirect('IMBD_app:home')  # Redirect to the home page after logout
 
+def search_results(request):
+    query = request.GET.get('q', '')
+    category = request.GET.get('category', 'movie')  # Default to 'movie' if no category is selected
+
+    results = {
+        'movies': [],
+        'actors': [],
+        'directors': [],
+        'genres': [],
+    }
+
+    # Wenn ein Suchbegriff angegeben ist, filtere die entsprechenden Modelle
+    if query:
+        if category == 'movie':
+            results['movies'] = Movie.objects.filter(title__icontains=query)
+        elif category == 'actor':
+            results['actors'] = Actor.objects.filter(name__icontains=query)
+        elif category == 'director':
+            results['directors'] = Director.objects.filter(name__icontains=query)
+        elif category == 'genre':
+            results['genres'] = Genre.objects.filter(name__icontains=query)
+    
+    return render(request, 'IMBD_app/search_results.html', {
+        'query': query,
+        'category': category,
+        'results': results,
+    })
 
 
 def create(request):
@@ -228,10 +255,6 @@ def success(request):
 
 
 
-
-
-
-
 # alles für search bar
 
 def movie_list(request):
@@ -247,8 +270,8 @@ def movie_list(request):
     if query:
             # Lokale Filme filtern
             movies_db = Movie.objects.filter(
-                Q(title__icontains=query) | Q(genre__icontains=query)
-            )
+                Q(title__icontains=query) | Q(genres__name__icontains=query)
+            ).distinct()
             # TMDB-Filme suchen
             tmdb_response = fetch_tmdb_data("search/movie", params={"query": query})
             movies_tmdb = tmdb_response.get("results", [])
@@ -277,7 +300,7 @@ def director_list(request):
     if query:
             # Lokale Regisseure filtern
             directors_db = Director.objects.filter(
-                Q(name__icontains=query) | Q(surname__icontains=query)
+                Q(name__icontains=query)
             )
             # TMDB-Personen suchen
             tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
@@ -299,7 +322,7 @@ def director_list(request):
 # List of all actors (mock data)
 def actor_list(request):
     query = request.GET.get('q', '').strip()  # Suchbegriff
-    category = request.GET.get('category', 'actor')  # Standardkategorie "movie"
+    category = request.GET.get('category', 'actor')  # Standardkategorie "actor"
 
     # Datenbankabfragen
     actors_db = Actor.objects.none()
@@ -310,8 +333,8 @@ def actor_list(request):
     if query:
             # Lokale Schauspieler filtern
             actors_db = Actor.objects.filter(
-                Q(name__icontains=query) | Q(surname__icontains=query)
-            ).order_by('name')  # Sortiere nach Namen (alphabetisch)
+                Q(name__icontains=query)
+            )
             # TMDB-Personen suchen
             tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
             actors_tmdb = [

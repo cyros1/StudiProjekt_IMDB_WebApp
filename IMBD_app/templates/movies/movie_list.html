@@ -9,39 +9,13 @@
         <br>
         <h1>Movie List</h1>
         <ul>
-
-        {% comment %} alter code, selber grund wie in home.html {% endcomment %}
-
-        {% comment %} {% for movie in movies %}
-                <li>
-                <a href="{% url 'IMBD_app:movie_details' pk=movie.id %}">{{ movie.title }}</a>
-                </li>
-        {% endfor %}
-        </ul>
-
-        {% if not movies %}
-                <p>No movies found.</p>
-        {% endif %} {% endcomment %}
-
-        {% comment %} {% if movies.exists %}
-                <h2>Results for "{{ query }}" in {{ category|title }}</h2>
-                {% for movie in movies %}
-                    <div>
-                        <h3><a href="{% url 'IMBD_app:movie_details' pk=movie.id %}">{{ movie.title }}</a></h3>
-                        <p>Genre: {{ movie.genre }}</p>
-                    </div>
-                    {% endfor %}
-                    {% else %}
-                        <p>No results found.</p>
-                    {% endif %} {% endcomment %}
-
     <h2>Search Results for "{{ query }}" in {{ category|title }}</h2>
 
     <h3>Local Movies</h3>
     {% for movie in movies_db %}
         <div>
             <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.id %}">{{ movie.title }}</a></h4>
-            <p>Genre: {{ movie.genre }}</p>
+            {% comment %} <p>Genre: {{ movie.genre }}</p> {% endcomment %}
         </div>
     {% empty %}
         <p>No local movies found.</p>
@@ -52,7 +26,7 @@
     {% for movie in movies_tmdb %}
         <div>
             <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.id %}">{{ movie.title }}</a></h4>
-            <p>Genre: {{ movie.genre }}</p>
+            {% comment %} <p>Genre: {{ movie.genre }}</p> {% endcomment %}
         </div>
     {% empty %}
         <p>No TMDB movies found.</p>
