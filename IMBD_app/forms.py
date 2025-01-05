@@ -1,11 +1,11 @@
 from django import forms
 from .models import Movie, Actor, Director, UserComment, UserRating, Genre
-
+from .utils.tmdb import generate_custom_id
 
 class ActorForm(forms.ModelForm):
     class Meta:
         model = Actor
-        fields = ['name', 'biography', 'profile_path', 'custom_profile_image']
+        fields = ['name', 'biography', 'profile_path', 'custom_profile_image', 'custom_id']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter actor name'}),
             'biography': forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Write a short biography'}),
@@ -54,29 +54,33 @@ class DirectorForm(forms.ModelForm):
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
-        fields = ['tmdb_id', 'title', 'release_date', 'backdrop_path', 'custom_backdrop_image', 'overview', 'rating', 'genres', 'actors', 'directors', 'is_custom']
+        fields = ['title', 'release_date', 'custom_backdrop_image', 'overview', 'rating', 'genres', 'actors', 'directors',]
         widgets = {
-            'tmdb_id': forms.NumberInput(attrs={'class': 'form-field', 'placeholder': 'Enter TMDb ID'}),
             'title': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter movie title'}),
             'release_date': forms.DateInput(attrs={'class': 'form-field', 'placeholder': 'Enter release date'}),
-            'backdrop_path': forms.URLInput(attrs={'class': 'form-field', 'placeholder': 'Enter backdrop URL'}),
             'custom_backdrop_image': forms.ClearableFileInput(attrs={'class': 'form-field'}),  # File input widget
             'overview': forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Write a short overview'}),
             'rating': forms.NumberInput(attrs={'class': 'form-field', 'placeholder': 'Enter rating'}),
             'genres': forms.SelectMultiple(attrs={'class': 'form-field'}),
             'actors': forms.SelectMultiple(attrs={'class': 'form-field'}),
             'directors': forms.SelectMultiple(attrs={'class': 'form-field'}),
-            'is_custom': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def save(self, commit=True):
-        movie = super().save(commit=False)
-        if self.cleaned_data.get('custom_backdrop_image'):
-            movie.backdrop_path = None
-            movie.custom_backdrop_image = self.cleaned_data['custom_backdrop_image']
+        actor = super().save(commit=False)
+        
+        # If there's a custom profile image, use it and clear the profile_path
+        if self.cleaned_data.get('custom_profile_image'):
+            actor.profile_path = None
+            actor.custom_profile_image = self.cleaned_data['custom_profile_image']
+
+        # Generate and assign a custom ID
+        if not actor.custom_id:
+            actor.custom_id = generate_custom_id()
+
         if commit:
-            movie.save()
-        return movie
+            actor.save()
+        return actor
 
 
 class GenreForm(forms.ModelForm):

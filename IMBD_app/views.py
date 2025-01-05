@@ -1,10 +1,10 @@
 from django.forms import ValidationError
 from django.http import Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from .models import Genre, Movie, Actor, Director
 from .forms import ActorForm, DirectorForm, MovieForm, UserCommentForm, UserRatingForm
-from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb, fetch_actor_from_tmdb, fetch_director_from_tmdb
+from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb, fetch_actor_from_tmdb, fetch_director_from_tmdb, generate_custom_id
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login as auth_login, logout
@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.db.models import Avg
 from .forms import UserCommentForm, UserRatingForm
 from .models import Movie, Watchlist
+import random, string
 # Create your views here.
 
 from django.shortcuts import render
@@ -195,6 +196,21 @@ def actor_details(request, pk):
     })
 
 
+def actor_detail(request, pk):
+    # Fetch actor by custom ID (not tmdb_id)
+    actor = Actor.objects.filter(custom_id=pk).first()
+    
+    if not actor:
+        messages.error(request, "Actor not found.")
+        return redirect('IMBD_app:home')  # Redirect to create page or another appropriate page
+
+    # Get the top 5 movies the actor is known for
+    top_movies = actor.known_for_movies.all()[:5]
+
+    return render(request, "actors/actor_detail.html", {
+        "actor": actor,
+        "top_movies": top_movies,
+    })
 
 
 
@@ -299,6 +315,7 @@ def search_results(request):
         'results': results,
     })
 
+from django.shortcuts import redirect
 
 def create(request):
     actor_form = ActorForm()
@@ -312,12 +329,16 @@ def create(request):
         if form_type == 'actor':
             actor_form = ActorForm(request.POST, request.FILES)
             if actor_form.is_valid():
-                actor_form.save()
+                # Save the actor form and generate custom ID
+                actor = actor_form.save(commit=False)
+                actor.custom_id = generate_custom_id()  # Generate custom ID
+                actor.save()
                 print("Actor created successfully!")  # Debugging-Ausgabe
                 messages.success(request, "Actor created successfully!")
-                return redirect('IMBD_app:create')  # Redirect to actor list or another page
+                
+                # Redirect to actor_detail view using the custom ID
+                return redirect('IMBD_app:actor_detail', pk=actor.custom_id)  # Redirect to the custom actor detail page
             else:
-                # Debugging: Print out form errors
                 print("ERROR: Actor couldn't be created")
                 print(actor_form.errors)
                 messages.error(request, "Error creating actor. Please check the form.")

@@ -17,6 +17,9 @@ urlpatterns = [
     # Actor related URLs
     path("actors/", views.actor_list, name="actor_list"),
     path("actors/<int:pk>/", views.actor_details, name="actor_details"),  # Actor detail page
+    # For custom actors (using custom_id)
+    path("actors/<str:pk>/", views.actor_detail, name="actor_detail"),  # Custom actor detail page
+    
 
     # Director related URLs
     path("directors/", views.director_list, name="director_list"),

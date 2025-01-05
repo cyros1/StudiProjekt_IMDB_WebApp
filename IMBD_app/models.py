@@ -48,6 +48,7 @@ class Movie(models.Model):
 
 class Actor(models.Model):
     tmdb_id = models.IntegerField(unique=True, null=True, blank=True)  # Allow null for custom entries
+    custom_id = models.CharField(max_length=6, unique=True, null=True, blank=True)  # Unique 6-character ID for custom actors
     name = models.CharField(max_length=255)
     profile_path = models.CharField(max_length=255, null=True, blank=True)  # For TMDb API paths
     custom_profile_image = models.ImageField(

@@ -2,6 +2,7 @@ from datetime import timedelta
 from django.utils.timezone import now
 from ..models import Movie, Genre, Actor, Director, CachedData, MovieActor
 import requests
+import random, string
 
 API_KEY = "2af4d814ca966334015aa4ea035219e7"
 BASE_URL = "https://api.themoviedb.org/3"
@@ -265,6 +266,10 @@ def retrieve_500_pages(endpoint):
 
     return all_movies
 
-
+def generate_custom_id():
+    custom_id = ''.join(random.choices(string.ascii_uppercase, k=6))  # Generate a random 6-letter ID
+    while Actor.objects.filter(custom_id=custom_id).exists():  # Ensure the custom_id is unique
+        custom_id = ''.join(random.choices(string.ascii_uppercase, k=6))  # Regenerate if exists
+    return custom_id
 
 
