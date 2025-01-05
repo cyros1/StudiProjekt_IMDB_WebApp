@@ -13,74 +13,65 @@
         <!-- Movie Details -->
         <div class="p-6 space-y-4">
             <h1 class="text-4xl font-bold text-text-white">{{ movie.title }}</h1>
-            <p class="text-text-white">Release Date: <span class="font-medium text-search-bar-purple">{{ movie.release_date|default:"No information available" }}</span></p>
-            <p class="text-text-white">{{ movie.overview|default:"No information available" }}</p>
+            <p class="text-text-white">Release Date: <span class="font-medium text-search-bar-purple">{{ movie.release_date }}</span></p>
+            <p class="text-text-white">{{ movie.overview }}</p>
         </div>
 
         <!-- Additional Info -->
         <div class="p-6 bg-f-border-purple border-t border-f-lighter-purple">
             <h2 class="text-2xl font-semibold text-text-white mb-3">Additional Information</h2>
             <ul class="space-y-2">
-                <!-- Director Information -->
                 <li>
                     <strong class="text-search-bar-purple">Director:</strong>
-                    {% if directors %}
-                        {% for director in directors %}
-                            {% if director.tmdb_id %}
-                                <a href="{% url 'IMBD_app:director_details' director.tmdb_id %}" class="text-blue-500 hover:underline">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
-                            {% else %}
-                                <span>No information available</span>{% if not forloop.last %}, {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        <span>No information available</span>
-                    {% endif %}
+                    {% for director in directors %}
+                        <a href="{% url 'IMBD_app:director_details' director.id %}" class="text-blue-500 hover:underline">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
                 </li>
-
-                <!-- Top Actors -->
                 <li>
-                    <strong>Top Actors:</strong>
-                    {% if cast %}
-                        {% for movie_actor in cast %}
-                            {% if movie_actor.actor.tmdb_id %}
-                                <a href="{% url 'IMBD_app:actor_details' movie_actor.actor.tmdb_id %}" class="text-blue-500 hover:underline">
-                                    {{ movie_actor.actor.name }}
-                                </a>
-                                {% if not forloop.last %}, {% endif %}
-                            {% else %}
-                                <span>No information available</span>{% if not forloop.last %}, {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        <span>No information available</span>
-                    {% endif %}
+                    <strong class="text-search-bar-purple">Top Actors:</strong>
+                    {% for movie_actor in cast %}
+                        <a href="{% url 'IMBD_app:actor_details' movie_actor.actor.id %}" class="text-blue-500 hover:underline">{{ movie_actor.actor.name }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
                 </li>
-
-                <!-- Genre Information -->
                 <li>
                     <strong class="text-search-bar-purple">Genre:</strong>
-                    {% if movie.genres.all %}
-                        {% for genre in movie.genres.all %}
-                            <span>{{ genre.name }}{% if not forloop.last %}, {% endif %}</span>
-                        {% endfor %}
-                    {% else %}
-                        <span>No information available</span>
-                    {% endif %}
+                    {% for genre in genres %}
+                        <span>{{ genre.name }}{% if not forloop.last %}, {% endif %}</span>
+                    {% endfor %}
                 </li>
-
-                <!-- Movie Rating -->
                 <li>
-                    <strong class="text-search-bar-purple">Rating:</strong> 
-                    {{ movie.rating|default:"No information available" }} / 10
+                    <strong class="text-search-bar-purple">Rating:</strong> {{ movie.rating|default:"No information available" }} / 10
+                </li>
+                <li>
+                    <strong class="text-search-bar-purple">User Rating:</strong> {{ user_average_rating|floatformat:1|default:"No Ratings Yet" }} / 10
                 </li>
             </ul>
         </div>
 
-        <!-- Call to Action (Optional) -->
-        <div class="p-6 bg-submit-button text-center">
-            <button class="px-4 py-2 bg-hover-button hover:bg-light-pink text-text-white font-bold rounded-lg transition">
-                Watch Trailer
-            </button>
+        <!-- Comments Section -->
+        <div class="p-6">
+            <h3 class="text-2xl font-semibold text-text-white mb-3">Comments</h3>
+            <ul class="space-y-4">
+                {% for comment in comments %}
+                <li class="p-4 bg-gray-800 rounded-lg">
+                    <p><strong>{{ comment.user.username }}</strong>: {{ comment.comment }}</p>
+                    <p class="text-sm text-gray-500">Rating: {{ comment.rating|floatformat:1|default:"-" }} / 10</p>
+                    <p class="text-sm text-gray-500">Posted on {{ comment.created_at|date:"Y-m-d H:i" }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+
+            {% if user.is_authenticated %}
+            <h3 class="text-2xl font-semibold text-text-white mt-6">Add a Comment and Rating</h3>
+            <form method="post" class="space-y-4 mt-4">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                {{ rating_form.as_p }}
+                <button type="submit" name="submit" class="w-full bg-submit-button hover:bg-hover-button text-white font-bold py-2 px-4 rounded">Submit</button>
+            </form>
+            {% else %}
+            <p>You need to <a href="{% url 'IMBD_app:user_login' %}" class="text-blue-500 underline">log in</a> to comment or rate.</p>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+from django.contrib.auth.models import User
 
 
 class Genre(models.Model):
@@ -51,14 +52,15 @@ class MovieActor(models.Model):
 
 class UserComment(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="comments")
-    user = models.CharField(max_length=255)  # Placeholder for user identification
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Nutzer-Referenz
     comment = models.TextField()
+    rating = models.FloatField(default=0.0)  # Rating im Kommentar
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class UserRating(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="ratings")
-    user = models.CharField(max_length=255)  # Placeholder for user identification
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_ratings")
     rating = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
 

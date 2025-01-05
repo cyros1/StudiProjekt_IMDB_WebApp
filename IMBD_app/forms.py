@@ -80,19 +80,28 @@ class UserCommentForm(forms.ModelForm):
         model = UserComment
         fields = ['comment']
         widgets = {
-            'comment': forms.Textarea(attrs={'rows': 4}),
+            'comment': forms.Textarea(attrs={
+                'class': 'form-field bg-footer-purple text-text-white',
+                'rows': 4,
+                'placeholder': 'Write your comment here...',
+            }),
         }
         labels = {
             'comment': 'Your Comment',
         }
-
 
 class UserRatingForm(forms.ModelForm):
     class Meta:
         model = UserRating
         fields = ['rating']
         widgets = {
-            'rating': forms.NumberInput(attrs={'min': 0, 'max': 10, 'step': 0.1}),
+            'rating': forms.NumberInput(attrs={
+                'class': 'form-field bg-footer-purple text-text-white',
+                'min': 0,
+                'max': 10,
+                'step': 0.1,
+                'placeholder': 'Enter a rating from 0 to 10',
+            }),
         }
         labels = {
             'rating': 'Your Rating (0-10)',

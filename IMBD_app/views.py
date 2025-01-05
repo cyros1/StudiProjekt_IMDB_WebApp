@@ -3,13 +3,14 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import Genre, Movie, Actor, Director
-from .forms import ActorForm, DirectorForm, MovieForm
-from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb, retrieve_500_pages, fetch_actor_from_tmdb, fetch_director_from_tmdb
+from .forms import ActorForm, DirectorForm, MovieForm, UserCommentForm, UserRatingForm
+from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb, fetch_actor_from_tmdb, fetch_director_from_tmdb
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.models import User 
-
+from django.db.models import Avg
+from .forms import UserCommentForm, UserRatingForm
 # Create your views here.
 
 from django.shortcuts import render
@@ -48,40 +49,57 @@ def fetch_movie_credits(movie_id):
     return fetch_tmdb_data(f"movie/{movie_id}/credits", params={"language": "en-US"})
 
 # Details of a specific movie 
-def movie_details(request, pk):
-    try:
-        # Try to fetch movie data from TMDb
-        movie = fetch_movie_from_tmdb(pk)
-    except ValidationError as e:
-        # If invalid data is found, return 404
-        raise Http404("The movie data is invalid or missing.")
-    except Exception as e:
-        # General exception for errors during TMDb fetch, return 404
-        raise Http404("The movie could not be found.")
-
-    # Check if the movie exists in the local database (using TMDb ID)
+def movie_details(request, pk):  # 'pk' statt 'tmdb_id'
     movie = Movie.objects.filter(tmdb_id=pk).first()
 
     if not movie:
-        # If the movie is not in the database, fetch it from TMDb and store it
         movie = fetch_movie_from_tmdb(pk)
 
-    # Fetch the genres, directors, and top actors
+    # Hole die API-Bewertung
     genres = movie.genres.all()
     directors = movie.directors.all()
     top_actors = movie.movie_actors.all()[:5]
 
-    # Default values for missing data
-    genres = genres if genres else ["No Genre Information Available"]
-    directors = directors if directors else ["No Director Information Available"]
-    cast = top_actors if top_actors else ["No Actor Information Available"]
 
-    # Render the template with the movie details
+    # Hole Kommentare und User-Bewertung
+    comments = movie.comments.select_related('user').order_by('-created_at')
+    ratings = movie.ratings.all()
+    user_average_rating = ratings.aggregate(average=Avg('rating'))['average']
+
+    if request.method == 'POST' and request.user.is_authenticated:
+        comment_form = UserCommentForm(request.POST)
+        rating_form = UserRatingForm(request.POST)
+
+        if comment_form.is_valid() and rating_form.is_valid():
+            # Speichere Kommentar
+            new_comment = comment_form.save(commit=False)
+            new_comment.movie = movie
+            new_comment.user = request.user
+            new_comment.rating = rating_form.cleaned_data['rating']
+            new_comment.save()
+
+            # Speichere Bewertung
+            new_rating = rating_form.save(commit=False)
+            new_rating.movie = movie
+            new_rating.user = request.user
+            new_rating.save()
+
+            messages.success(request, "Your comment and rating have been posted.")
+            return redirect('IMBD_app:movie_details', pk=pk)
+
+    else:
+        comment_form = UserCommentForm()
+        rating_form = UserRatingForm()
+
     return render(request, "movies/movie_details.html", {
         "movie": movie,
-        "genres": genres,
-        "directors": directors,
-        "cast": cast,
+        "genres": movie.genres.all(),
+        "directors": movie.directors.all(),
+        "cast": movie.movie_actors.all()[:5],
+        "user_average_rating": user_average_rating,
+        "comments": comments,
+        "comment_form": comment_form,
+        "rating_form": rating_form,
     })
 
 
