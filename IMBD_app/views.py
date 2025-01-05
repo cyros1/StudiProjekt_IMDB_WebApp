@@ -30,6 +30,8 @@ def home(request):
     # TMDB only provides endpoint for persons, the specifics (actor/director) have to be filtered out from the json
     top_people = fetch_tmdb_data("person/popular", params={"language": "en-US", "page": 1})
 
+    custom_actors = Actor.objects.filter(custom_id__isnull=False) 
+
     top_actors = [
         person for person in top_people.get("results", [])
         if person.get("known_for_department") == "Acting"
@@ -43,7 +45,8 @@ def home(request):
     return render(request, "home.html", {
         "top_movies": top_movies.get("results", []),
         "top_actors": top_actors,
-        "top_directors" : top_directors
+        "top_directors" : top_directors,
+        "custom_actors": custom_actors,  # Pass custom actors to the template
     })
 
 # Function to fetch movie credits (cast and crew)
@@ -241,7 +244,7 @@ def director_detail(request, pk):
     director = Director.objects.filter(custom_id=pk).first()
     
     if not director:
-        messages.error(request, "Actor not found.")
+        messages.error(request, "Director not found.")
         return redirect('IMBD_app:home')  # Redirect to create page or another appropriate page
 
     # Get the top 5 movies the actor is known for

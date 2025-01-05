@@ -79,23 +79,25 @@
             </div>
         </section>
 
-        <section class="category mb-10">
-            <h2 class="text-2xl font-bold mb-4">Top Directors</h2>
+         <!-- Custom Actors Section -->
+         <section class="category mb-10">
+            <h2 class="text-2xl font-bold mb-4">Custom Created Actors</h2>
             <div class="cards">
-                {% for director in top_directors %}
+                {% for actor in custom_actors %}
                 <div class="card">
                     <!-- Image -->
                     <div class="card-image mb-2">
-                        <img src="https://image.tmdb.org/t/p/w500{{ director.profile_path }}" alt="{{ director.name }}">
+                        <img src="{{ actor.get_profile_picture }}" alt="{{ actor.name }}">
                     </div>
-                    <!-- Movie Title + Descr -->
+                    <!-- Actor Name + Biography -->
                     <div>
-                        <p class="card-title">{{ director.name }}</p>
-                        <p class="card-description">{{ director.popularity}}</p>
+                        <p class="card-title">{{ actor.name }}</p>
+                        <p class="card-description">{{ actor.biography|default:"No biography available" }}</p>
                     </div>
-                    <!-- Button to Movie Details -->
+                    <!-- Button to Actor Details -->
                     <button class="card-button">
-                        <a href="/directors/{{ director.id }}">Show More</a></button>
+                        <a href="/actors/{{ actor.custom_id }}">Show More</a>
+                    </button>
                 </div>
                 {% endfor %}
             </div>
