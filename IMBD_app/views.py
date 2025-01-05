@@ -73,27 +73,20 @@ def movie_details(request, pk):
 
 # Actor Details (with database saving)
 def actor_details(request, pk):
-    # Check if the actor exists in the database
+    # Fetch actor details from the database or via API
     actor = Actor.objects.filter(tmdb_id=pk).first()
 
     if not actor:
-        # Fetch and store actor in the database if not found
         actor = fetch_actor_from_tmdb(pk)
 
-    if not actor:  # If actor is still None, handle gracefully
-        actor = Actor(name="Unknown Actor", biography="Biography not available")
-    
-    # Get the top movies the actor is known for with prefetch_related to fetch genres, directors, and actors
-    top_movies = actor.known_for_movies.prefetch_related(
-        'genres',  # Prefetch genres related to the movie
-        'directors',  # Prefetch directors related to the movie
-        'movie_actors__actor'  # Prefetch actors related to the movie
-    )[:5]  # Limit to top 5 movies
+    # Get the top 5 movies the actor is known for
+    top_movies = actor.known_for_movies.all()[:5]
 
     return render(request, "actors/actor_details.html", {
         "actor": actor,
-        "top_movies": top_movies,
+        "top_movies": top_movies,  # Use the actor's known for movies
     })
+
 
 
 

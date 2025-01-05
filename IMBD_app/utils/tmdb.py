@@ -162,10 +162,6 @@ def fetch_actor_from_tmdb(actor_id):
     if response.status_code == 200:
         actor_data = response.json()
 
-        # Ensure there is valid actor data
-        if not actor_data.get("name"):
-            return None
-
         # Create or update actor in the database
         actor, created = Actor.objects.update_or_create(
             tmdb_id=actor_data["id"],
@@ -200,6 +196,7 @@ def fetch_actor_from_tmdb(actor_id):
     else:
         print(f"Error fetching actor data: {response.status_code}")
         return None
+
 
 
 
