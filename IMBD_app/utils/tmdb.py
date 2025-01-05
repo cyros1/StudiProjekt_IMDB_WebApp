@@ -162,6 +162,10 @@ def fetch_actor_from_tmdb(actor_id):
     if response.status_code == 200:
         actor_data = response.json()
 
+        # Ensure there is valid actor data
+        if not actor_data.get("name"):
+            return None
+
         # Create or update actor in the database
         actor, created = Actor.objects.update_or_create(
             tmdb_id=actor_data["id"],
@@ -178,17 +182,38 @@ def fetch_actor_from_tmdb(actor_id):
 
         # Add or update the movies the actor is known for
         for movie_data in known_for_movies:
-            movie, _ = Movie.objects.update_or_create(
-                tmdb_id=movie_data["id"],
-                defaults={
-                    "title": movie_data["title"],
-                    "release_date": movie_data["release_date"],
-                    "backdrop_path": movie_data["backdrop_path"],
-                    "overview": movie_data["overview"],
-                    "rating": movie_data["vote_average"]
-                }
-            )
-            actor.known_for_movies.add(movie)  # Associate actor with the movie
+            # Fetch additional movie details (like genres, directors)
+            movie_detail = fetch_tmdb_data(f"movie/{movie_data['id']}", params={"append_to_response": "credits,genres"})
+            if movie_detail:
+                movie, _ = Movie.objects.update_or_create(
+                    tmdb_id=movie_detail["id"],
+                    defaults={
+                        "title": movie_detail.get("title", "No Title Available"),
+                        "release_date": movie_detail.get("release_date"),
+                        "backdrop_path": movie_detail.get("backdrop_path", ""),
+                        "overview": movie_detail.get("overview", "No Overview Available"),
+                        "rating": movie_detail.get("vote_average", 0)
+                    }
+                )
+
+                # Update genres
+                movie.genres.clear()
+                for genre_data in movie_detail.get("genres", []):
+                    genre, _ = Genre.objects.get_or_create(name=genre_data["name"])
+                    movie.genres.add(genre)
+
+                # Update directors
+                movie.directors.clear()
+                for crew_member in movie_detail.get("credits", {}).get("crew", []):
+                    if crew_member["job"] == "Director":
+                        director, _ = Director.objects.get_or_create(
+                            tmdb_id=crew_member["id"],
+                            defaults={"name": crew_member["name"], "profile_path": crew_member.get("profile_path")}
+                        )
+                        movie.directors.add(director)
+
+                # Now associate the actor with the movie
+                actor.known_for_movies.add(movie)
 
         # Return the actor object
         return actor
