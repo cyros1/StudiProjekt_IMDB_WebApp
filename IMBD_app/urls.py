@@ -11,7 +11,7 @@ urlpatterns = [
 
     # Movie related URLs
     path("movies/", views.movie_list, name="movie_list"),
-    path("movies/<int:tmdb_id>", views.movie_details, name="movie_details"),  # Movie detail page
+    path("movies/<int:pk>", views.movie_details, name="movie_details"),  # Movie detail page
 
 
     # Actor related URLs

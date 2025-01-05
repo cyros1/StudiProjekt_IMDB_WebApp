@@ -47,11 +47,11 @@ def fetch_movie_credits(movie_id):
 
 # Details of a specific movie 
 # In views.py
-def movie_details(request, tmdb_id):
-    movie = Movie.objects.filter(tmdb_id=tmdb_id).first()
+def movie_details(request, pk):
+    movie = Movie.objects.filter(tmdb_id=pk).first()
 
     if not movie:
-        movie = fetch_movie_from_tmdb(tmdb_id)  # Ensure you fetch movie from the API if not found in DB
+        movie = fetch_movie_from_tmdb(pk)
 
     genres = movie.genres.all()
     directors = movie.directors.all()
