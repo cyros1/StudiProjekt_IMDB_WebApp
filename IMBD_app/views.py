@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import Movie, Actor, Director
 from .forms import ActorForm, DirectorForm, MovieForm
-from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb
+from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb, fetch_director_from_tmdb, fetch_actor_from_tmdb
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login as auth_login, logout
@@ -47,16 +47,16 @@ def fetch_movie_credits(movie_id):
 
 # Details of a specific movie 
 def movie_details(request, pk):
-    # Check if the movie exists in the database
+    # Check if the movie exists in the database using the TMDb ID (pk is the TMDb ID here)
     movie = Movie.objects.filter(tmdb_id=pk).first()
 
     if not movie:
-        # Fetch and store movie in the database if not found
+        # If the movie is not in the database, fetch it from TMDb and store it
         movie = fetch_movie_from_tmdb(pk)
 
-    # Fetch actors and directors from the database
-    top_actors = movie.movie_actors.all()[:5] 
-    directors = movie.directors.all()
+    # Fetch the top actors and directors from the database
+    top_actors = movie.movie_actors.all()[:5]  # Get the first 5 actors
+    directors = movie.directors.all()  # Get directors for the movie
 
     return render(request, "movies/movie_details.html", {
         "movie": movie,
@@ -67,16 +67,22 @@ def movie_details(request, pk):
 
 
 
-# Details of a specific actor
+
+# Actor Details (with database saving)
 def actor_details(request, pk):
-    # Fetch actor details
-    actor = fetch_tmdb_data(f"person/{pk}", params={"language": "en-US"})
-    
-    # Fetch actor's movie credits (known for roles)
-    movie_credits = fetch_tmdb_data(f"person/{pk}/movie_credits", params={"language": "en-US"})
-    
-    # Get the top 5 movies the actor is known for
-    top_movies = movie_credits.get('cast', [])[:5]  # Limiting to the top 5 movies
+    # Check if the actor exists in the database
+    actor = Actor.objects.filter(tmdb_id=pk).first()
+
+    if not actor:
+        # Fetch and store actor in the database if not found
+        actor = fetch_actor_from_tmdb(pk)
+
+    # Get the top movies the actor is known for with prefetch_related to fetch genres, directors, and actors
+    top_movies = actor.known_for_movies.prefetch_related(
+        'genres',  # Prefetch genres related to the movie
+        'directors',  # Prefetch directors related to the movie
+        'movie_actors__actor'  # Prefetch actors related to the movie
+    )[:5]  # Limit to top 5 movies
 
     return render(request, "actors/actor_details.html", {
         "actor": actor,
@@ -85,7 +91,7 @@ def actor_details(request, pk):
 
 
 
-# Details of a specific director 
+# Director Details (with database saving)
 def director_details(request, pk):
     # Fetch director details
     director = fetch_tmdb_data(f"person/{pk}", params={"language": "en-US"})
@@ -95,12 +101,19 @@ def director_details(request, pk):
     
     # Get the top 5 movies the director has directed
     top_movies = movie_credits.get('crew', [])[:5]  # Limiting to the top 5 directed movies
+    
+    # Remove duplicates based on movie id (TMDb ID)
+    unique_movies = []
+    seen_ids = set()
+    for movie in top_movies:
+        if movie['id'] not in seen_ids:
+            unique_movies.append(movie)
+            seen_ids.add(movie['id'])
 
     return render(request, "directors/director_details.html", {
         "director": director,
-        "top_movies": top_movies,
+        "top_movies": unique_movies,  # Use unique movies in the template
     })
-
 
 
 
