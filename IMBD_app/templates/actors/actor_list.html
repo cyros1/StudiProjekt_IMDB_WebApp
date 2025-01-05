@@ -1,29 +1,35 @@
 {% extends 'base.html' %}
 {% load static %}
-    {% block main %}
-    <br>
-    <br>
-    <br>
-    <br>
 
-        <h1>Actor List</h1>
-        <h3>Local Actors</h3>
-        {% for actor in actors_db %}
-            <div>
-                <h4><a href="{% url 'IMBD_app:actor_details' pk=actor.id %}">{{ actor }}</a></h4>
-            </div>
-        {% empty %}
-            <p>No local actors found.</p>
-        {% endfor %}
-        <br>
-        <br>
-        <h3>TMDB Actors</h3>
-        {% for actor in actors_tmdb %}
-            <div>
-                <h4><a href="{% url 'IMBD_app:actor_details' pk=actor.id %}">{{ actor.name }}</a></h4>
-            </div>
-        {% empty %}
-            <p>No TMDB actors found.</p>
-        {% endfor %}
-    
-    {% endblock main%}
+{% block main %}
+<br><br><br><br>
+<h1>Actor List</h1>
+<h2>Search Results for "{{ query }}" in {{ category|title }}</h2>
+
+<!-- Local Actors -->
+<h3>Local Actors</h3>
+<ul>
+    {% for actor in actors_db %}
+        <div>
+            <h4><a href="{% url 'IMBD_app:actor_details' pk=actor.tmdb_id %}">{{ actor.name }}</a></h4>
+        </div>
+    {% empty %}
+        <p>No local actors found.</p>
+    {% endfor %}
+</ul>
+
+<br><br>
+
+<!-- TMDB Actors -->
+<h3>TMDB Actors</h3>
+<ul>
+    {% for actor in actors_tmdb %}
+        <div>
+            <h4><a href="{% url 'IMBD_app:actor_details' pk=actor.tmdb_id %}">{{ actor.name }}</a></h4>
+        </div>
+    {% empty %}
+        <p>No TMDB actors found.</p>
+    {% endfor %}
+</ul>
+
+{% endblock %}

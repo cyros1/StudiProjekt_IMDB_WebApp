@@ -1,29 +1,35 @@
 {% extends 'base.html' %}
 {% load static %}
-    {% block main %}
-    <br>
-    <br>
-    <br>
-    <br>
 
-        <h1>Director List</h1>
-        <h3>Local directors</h3>
-        {% for director in directors_db %}
-            <div>
-                <h4><a href="{% url 'IMBD_app:director_details' pk=director.id %}">{{ director }}</a></h4>
-            </div>
-        {% empty %}
-            <p>No local Directors found.</p>
-        {% endfor %}
-        <br>
-        <br>
-        <h3>TMDB Directors</h3>
-        {% for director in directors_tmdb %}
-            <div>
-                <h4><a href="{% url 'IMBD_app:director_details' pk=director.id %}">{{ director.name }}</a></h4>
-            </div>
-        {% empty %}
-            <p>No TMDB directors found.</p>
-        {% endfor %}
-    
-    {% endblock main%}
+{% block main %}
+<br><br><br><br>
+<h1>Director List</h1>
+<h2>Search Results for "{{ query }}" in {{ category|title }}</h2>
+
+<!-- Local Directors -->
+<h3>Local Directors</h3>
+<ul>
+    {% for director in directors_db %}
+        <div>
+            <h4><a href="{% url 'IMBD_app:director_details' pk=director.tmdb_id %}">{{ director.name }}</a></h4>
+        </div>
+    {% empty %}
+        <p>No local directors found.</p>
+    {% endfor %}
+</ul>
+
+<br><br>
+
+<!-- TMDB Directors -->
+<h3>TMDB Directors</h3>
+<ul>
+    {% for director in directors_tmdb %}
+        <div>
+            <h4><a href="{% url 'IMBD_app:director_details' pk=director.tmdb_id %}">{{ director.name }}</a></h4>
+        </div>
+    {% empty %}
+        <p>No TMDB directors found.</p>
+    {% endfor %}
+</ul>
+
+{% endblock %}

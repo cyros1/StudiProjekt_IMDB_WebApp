@@ -32,6 +32,9 @@ urlpatterns = [
 
     # Success page
     path("success/", views.success, name="success"),
+
+    path('all_movies/', views.all_movies, name='all_movies'),
+    path('recent_movies/', views.recent_movies, name='recent_movies'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

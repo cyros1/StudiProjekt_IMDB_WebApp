@@ -6,17 +6,19 @@ import requests
 API_KEY = "2af4d814ca966334015aa4ea035219e7"
 BASE_URL = "https://api.themoviedb.org/3"
 
-def fetch_tmdb_data(endpoint, params=None):
+def fetch_tmdb_data(endpoint, params=None, page=1):
     """
-    Fetch data from TMDb API.
+    Fetch data from TMDb API with optional pagination.
     :param endpoint: API endpoint (e.g., 'movie/popular', 'search/movie').
     :param params: Dictionary of additional parameters.
+    :param page: Page number to fetch (default is 1).
     :return: JSON response or None if the request fails.
     """
     if params is None:
         params = {}
 
     params['api_key'] = API_KEY
+    params['page'] = page  # Adding page parameter for pagination
     url = f"{BASE_URL}/{endpoint}"
 
     response = requests.get(url, params=params)
@@ -25,6 +27,7 @@ def fetch_tmdb_data(endpoint, params=None):
     else:
         print(f"Error fetching TMDb data: {response.status_code}")
         return None
+
 
 
 def fetch_movie_from_tmdb(movie_id):
@@ -125,11 +128,17 @@ def fetch_director_from_tmdb(director_id):
         # Add or update only those movies where the director is actually listed as the director
         for movie_data in directed_movies:
             if movie_data['job'] == 'Director':  # Ensure it is a directed movie
+                release_date = movie_data.get("release_date", None)
+                
+                # If release_date is an empty string, set it to None
+                if release_date == "":
+                    release_date = None
+
                 movie, created = Movie.objects.update_or_create(
                     tmdb_id=movie_data["id"],
                     defaults={
                         "title": movie_data["title"],
-                        "release_date": movie_data["release_date"],
+                        "release_date": release_date,  # Set None if empty string
                         "backdrop_path": movie_data["backdrop_path"],
                         "overview": movie_data["overview"],
                         "rating": movie_data["vote_average"]
@@ -143,6 +152,7 @@ def fetch_director_from_tmdb(director_id):
     else:
         print(f"Error fetching director data: {response.status_code}")
         return None
+
 
 
     
@@ -185,11 +195,17 @@ def fetch_actor_from_tmdb(actor_id):
             # Fetch additional movie details (like genres, directors)
             movie_detail = fetch_tmdb_data(f"movie/{movie_data['id']}", params={"append_to_response": "credits,genres"})
             if movie_detail:
+                release_date = movie_detail.get("release_date", None)
+
+                # If release_date is an empty string, set it to None
+                if release_date == "":
+                    release_date = None
+
                 movie, _ = Movie.objects.update_or_create(
                     tmdb_id=movie_detail["id"],
                     defaults={
                         "title": movie_detail.get("title", "No Title Available"),
-                        "release_date": movie_detail.get("release_date"),
+                        "release_date": release_date,  # Set None if empty string
                         "backdrop_path": movie_detail.get("backdrop_path", ""),
                         "overview": movie_detail.get("overview", "No Overview Available"),
                         "rating": movie_detail.get("vote_average", 0)
@@ -221,6 +237,33 @@ def fetch_actor_from_tmdb(actor_id):
     else:
         print(f"Error fetching actor data: {response.status_code}")
         return None
+
+
+
+def retrieve_500_pages(endpoint):
+    """
+    Retrieve data across 500 pages from a given endpoint (e.g., 'movie/popular').
+    :param endpoint: The endpoint to query (e.g., 'movie/popular', 'search/movie').
+    :return: List of all movie data across all 500 pages.
+    """
+    all_movies = []
+    page = 1
+
+    # Loop to retrieve movies from 500 pages
+    while page <= 500:
+        data = fetch_tmdb_data(endpoint, page=page)
+
+        if data and 'results' in data:
+            all_movies.extend(data['results'])
+            # Check if there are more pages, otherwise break
+            total_pages = data.get('total_pages', 0)
+            if page >= total_pages:
+                break  # Exit loop if we have retrieved all pages
+            page += 1
+        else:
+            break  # Stop if there's no data or an error occurs
+
+    return all_movies
 
 
 

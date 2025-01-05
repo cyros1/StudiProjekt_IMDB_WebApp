@@ -1,8 +1,7 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% load static %}
 
 {% block main %}
-
 <br><br><br><br>
 <h1>Movie List</h1>
 <h2>Search Results for "{{ query }}" in {{ category|title }}</h2>
@@ -12,8 +11,8 @@
 <ul>
     {% for movie in movies_db %}
         <div>
-            <!-- Use local database ID -->
             <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.tmdb_id %}">{{ movie.title }}</a></h4>
+            <p>Genres: {% for genre in movie.genres.all %}{{ genre.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
         </div>
     {% empty %}
         <p>No local movies found.</p>
@@ -27,8 +26,8 @@
 <ul>
     {% for movie in movies_tmdb %}
         <div>
-            <!-- Use TMDB ID -->
-            <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.id %}">{{ movie.title }}</a></h4>
+            <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.tmdb_id %}">{{ movie.title }}</a></h4>
+            <p>Genres: {% for genre in movie.genres.all %}{{ genre.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
         </div>
     {% empty %}
         <p>No TMDB movies found.</p>
