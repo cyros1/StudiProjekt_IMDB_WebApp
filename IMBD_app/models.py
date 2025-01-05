@@ -7,6 +7,9 @@ from django.core.validators import FileExtensionValidator
 class Genre(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    def __str__(self):
+        return self.name  # Anzeigen des Namens in der Dropdown-Liste
+
 
 class Movie(models.Model):
     tmdb_id = models.IntegerField(unique=True, null=True, blank=True)  # Allow null for custom entries
@@ -22,6 +25,7 @@ class Movie(models.Model):
     overview = models.TextField(null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)  # Average TMDb rating
     genres = models.ManyToManyField(Genre, related_name="movies")  # Many-to-Many relationship with Genre
+    actors = models.ManyToManyField('Actor', related_name="movies")
     directors = models.ManyToManyField('Director', related_name="movies")  # Many-to-Many with Director
     is_custom = models.BooleanField(default=False)  # Flag for custom movies (not from TMDb)
     cached_at = models.DateTimeField(auto_now_add=True)  # Last time the movie was fetched
@@ -37,6 +41,9 @@ class Movie(models.Model):
         elif self.backdrop_path:
             return f'https://image.tmdb.org/t/p/w500{self.backdrop_path}'  # TMDb image
         return '/static/images/default-backdrop.png'  # Default fallback
+    
+    def __str__(self):
+        return self.title  # Anzeigen des Namens in der Dropdown-Liste
 
 
 class Actor(models.Model):
@@ -61,6 +68,9 @@ class Actor(models.Model):
         elif self.profile_path:
             return f'https://image.tmdb.org/t/p/w500{self.profile_path}'  # TMDb image
         return '/static/images/default-profile.png'  # Default fallback
+    
+    def __str__(self):
+        return self.name  # Anzeigen des Namens in der Dropdown-Liste
 
 
 
@@ -89,7 +99,9 @@ class Director(models.Model):
         elif self.profile_path:
             return f'https://image.tmdb.org/t/p/w500{self.profile_path}'  # TMDb image
         return '/static/images/default-profile.png'  # Default fallback
-
+    
+    def __str__(self):
+        return self.name  # Anzeigen des Namens in der Dropdown-Liste
 
 class MovieActor(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="movie_actors")

@@ -56,23 +56,21 @@
         </div>
 
         <!-- Movie Form -->
-        <div id="movieForm" class="entityForm hidden">
-            <form method="POST" enctype="multipart/form-data" class="space-y-4">
-                {% csrf_token %}
-                <input type="hidden" name="form_type" value="movie"> <!-- Verstecktes Feld -->
-                {% for field in movie_form %}
-                    <div>
-                        <label for="{{ field.id_for_label }}" class="block">{{ field.label }}:</label>
+    <div id="movieForm" class="entityForm hidden">
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+                <input type="hidden" name="form_type" value="movie">
+                    {% for field in movie_form %}
+                        <div>
+                            <label for="{{ field.id_for_label }}" class="block">{{ field.label }}:</label>
                         {{ field }}
-                        {% if field.errors %}
-                            <p class="text-red-500 text-sm">{{ field.errors|join:", " }}</p>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-                
-                <button type="submit" class="w-full bg-submit-button hover:bg-hover-button text-text-white font-semibold py-3 rounded-lg">Submit</button>
-            </form>
-        </div>
+                {% if field.errors %}
+                    <p class="text-red-500 text-sm">{{ field.errors|join:", " }}</p>
+                {% endif %}
+                </div>
+            {% endfor %}
+         <button type="submit" class="w-full bg-submit-button hover:bg-hover-button text-text-white font-semibold py-3 rounded-lg">Submit</button>
+        </form>
     </div>
 
     <script>

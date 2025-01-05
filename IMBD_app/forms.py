@@ -54,7 +54,7 @@ class DirectorForm(forms.ModelForm):
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
-        fields = ['tmdb_id', 'title', 'release_date', 'backdrop_path', 'custom_backdrop_image', 'overview', 'rating', 'genres', 'directors', 'is_custom']
+        fields = ['tmdb_id', 'title', 'release_date', 'backdrop_path', 'custom_backdrop_image', 'overview', 'rating', 'genres', 'actors', 'directors', 'is_custom']
         widgets = {
             'tmdb_id': forms.NumberInput(attrs={'class': 'form-field', 'placeholder': 'Enter TMDb ID'}),
             'title': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter movie title'}),
@@ -64,6 +64,7 @@ class MovieForm(forms.ModelForm):
             'overview': forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Write a short overview'}),
             'rating': forms.NumberInput(attrs={'class': 'form-field', 'placeholder': 'Enter rating'}),
             'genres': forms.SelectMultiple(attrs={'class': 'form-field'}),
+            'actors': forms.SelectMultiple(attrs={'class': 'form-field'}),
             'directors': forms.SelectMultiple(attrs={'class': 'form-field'}),
             'is_custom': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
