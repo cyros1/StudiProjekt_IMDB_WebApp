@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.models import User 
 from django.db.models import Avg
 from .forms import UserCommentForm, UserRatingForm
+from .models import Movie, Watchlist
 # Create your views here.
 
 from django.shortcuts import render
@@ -49,7 +50,9 @@ def fetch_movie_credits(movie_id):
     return fetch_tmdb_data(f"movie/{movie_id}/credits", params={"language": "en-US"})
 
 # Details of a specific movie 
+# Details of a specific movie 
 def movie_details(request, pk):  
+    # Hole den Film aus der Datenbank oder von TMDB
     movie = Movie.objects.filter(tmdb_id=pk).first()
 
     if not movie:
@@ -60,25 +63,42 @@ def movie_details(request, pk):
     directors = movie.directors.all()
     top_actors = movie.movie_actors.all()[:5]
 
-
     # Hole Kommentare und User-Bewertung
     comments = movie.comments.select_related('user').order_by('-created_at')
     ratings = movie.ratings.all()
     user_average_rating = ratings.aggregate(average=Avg('rating'))['average']
 
+    # Benutzer-Watchlist abrufen (Liste der tmdb_id-Werte)
+    user_watchlist = list(
+        Watchlist.objects.filter(user=request.user).values_list('movie__tmdb_id', flat=True)
+    ) if request.user.is_authenticated else []
+
+    # POST-Anfrage bearbeiten
     if request.method == 'POST' and request.user.is_authenticated:
+        # Wenn der Button für Watchlist verwendet wird
+        if 'add_to_watchlist' in request.POST or 'remove_from_watchlist' in request.POST:
+            # Film zur Watchlist hinzufügen oder entfernen
+            if movie.tmdb_id in user_watchlist:
+                Watchlist.objects.filter(user=request.user, movie=movie).delete()
+                messages.success(request, f"'{movie.title}' wurde aus Ihrer Watchlist entfernt.")
+            else:
+                Watchlist.objects.create(user=request.user, movie=movie)
+                messages.success(request, f"'{movie.title}' wurde Ihrer Watchlist hinzugefügt.")
+
+            # Nach der Änderung der Watchlist zurück zur Detailseite
+            return redirect('IMBD_app:movie_details', pk=pk)
+
+        # Kommentare und Bewertungen speichern
         comment_form = UserCommentForm(request.POST)
         rating_form = UserRatingForm(request.POST)
 
         if comment_form.is_valid() and rating_form.is_valid():
-            # Speichere Kommentar
             new_comment = comment_form.save(commit=False)
             new_comment.movie = movie
             new_comment.user = request.user
             new_comment.rating = rating_form.cleaned_data['rating']
             new_comment.save()
 
-            # Speichere Bewertung
             new_rating = rating_form.save(commit=False)
             new_rating.movie = movie
             new_rating.user = request.user
@@ -88,19 +108,23 @@ def movie_details(request, pk):
             return redirect('IMBD_app:movie_details', pk=pk)
 
     else:
+        # Initialisiere Formulare
         comment_form = UserCommentForm()
         rating_form = UserRatingForm()
 
+    # Daten an das Template übergeben
     return render(request, "movies/movie_details.html", {
         "movie": movie,
-        "genres": movie.genres.all(),
-        "directors": movie.directors.all(),
-        "cast": movie.movie_actors.all()[:5],
+        "genres": genres,
+        "directors": directors,
+        "cast": top_actors,
         "user_average_rating": user_average_rating,
         "comments": comments,
+        "user_watchlist": user_watchlist,  # Aktuelle Watchlist des Nutzers als Liste
         "comment_form": comment_form,
         "rating_form": rating_form,
     })
+
 
 
 
@@ -460,3 +484,41 @@ def actor_list(request):
         "actors_tmdb": actors_tmdb,  # TMDB actors
     }
     return render(request, "actors/actor_list.html", context)
+
+def toggle_watchlist(request, pk):
+    if request.method == "POST" and request.user.is_authenticated:
+        # Prüfen, ob der Film in der Datenbank existiert
+        movie = Movie.objects.filter(tmdb_id=pk).first()
+        
+        # Wenn der Film nicht existiert, aus der TMDB-API laden
+        if not movie:
+            movie = fetch_movie_from_tmdb(pk)
+
+        # Prüfen, ob der Film in der Watchlist des Benutzers ist
+        watchlist_item = Watchlist.objects.filter(user=request.user, movie=movie).first()
+
+        if watchlist_item:
+            # Film aus der Watchlist entfernen
+            watchlist_item.delete()
+            messages.success(request, f"'{movie.title}' has been removed from your watchlist.")
+        else:
+            # Film zur Watchlist hinzufügen (nur Titel verwenden)
+            Watchlist.objects.create(user=request.user, movie=movie)
+            messages.success(request, f"'{movie.title}' has been added to your watchlist.")
+
+        return redirect('IMBD_app:movie_details', pk=pk)
+    else:
+        messages.error(request, "You need to be logged in to modify your watchlist.")
+        return redirect('IMBD_app:user_login')
+
+
+
+def watchlist_view(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in to view your watchlist.")
+        return redirect('IMBD_app:user_login')
+
+    watchlist_items = Watchlist.objects.filter(user=request.user)
+    return render(request, "watchlist.html", {
+        "movie_titles": watchlist_items
+    })

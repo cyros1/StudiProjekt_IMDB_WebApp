@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}My Watchlist{% endblock %}
+
+{% block main %}
+<div class="p-6" style="margin-top: 3cm;">
+    <h1 class="text-2xl font-bold mb-4">My Watchlist</h1>
+
+    {% if movie_titles %}
+        <ul>
+            {% for item in movie_titles %}
+                <li class="mb-4 flex items-center">
+                    <span class="text-lg font-semibold">{{ item.movie.title }}</span>
+                    <form method="post" action="{% url 'IMBD_app:toggle_watchlist' item.movie.tmdb_id %}" class="ml-4">
+                        {% csrf_token %}
+                        <button type="submit" 
+                                class="p-2 bg-red-500 text-white rounded hover:bg-red-600">
+                            Remove 
+                        </button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-gray-600">Your watchlist is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}

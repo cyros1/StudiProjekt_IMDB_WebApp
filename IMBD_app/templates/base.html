@@ -104,6 +104,12 @@
                 <div id="account-dropdown-menu" class="absolute right-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg w-40 hidden">
                     <ul class="py-1 text-gray-700">
                         {% if user.is_authenticated %}
+
+                            <!-- Watchlist Option -->
+                          <li>
+                                 <a href="{% url 'IMBD_app:watchlist' %}" class="block px-4 py-2 text-sm hover:bg-gray-100">Watchlist</a>
+                          </li>
+
                             <!-- Logout Option -->
                             <li>
                                 <a href="/logout" class="block px-4 py-2 text-sm hover:bg-gray-100">Logout</a>
@@ -277,7 +283,29 @@
             <p>© 2024 IMBD - All Rights Reserved - This project uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</p>
         </footer>
 
+        {% if messages %}
+        <div id="messages-container" class="fixed top-4 right-4 z-50">
+            {% for message in messages %}
+            <div class="bg-white text-blue-500 px-4 py-2 rounded shadow-lg mb-2">
+                <!-- Nachrichten-Container mit weißem Hintergrund und blauer Schrift -->
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        <script>
+            // Timeout, um Nachrichten nach 3 Sekunden auszublenden
+            setTimeout(() => {
+                const messagesContainer = document.getElementById('messages-container');
+                if (messagesContainer) {
+                    messagesContainer.style.transition = 'opacity 0.5s ease';
+                    messagesContainer.style.opacity = '0';
+                    setTimeout(() => messagesContainer.remove(), 500);
+                }
+            }, 1000); // Nachrichten nach 3 Sekunden ausblenden
+        </script>
+        {% endif %}
         
+                       
 
 
     </body>

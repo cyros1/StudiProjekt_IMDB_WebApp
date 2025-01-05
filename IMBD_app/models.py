@@ -120,3 +120,13 @@ class CachedData(models.Model):
     model_type = models.CharField(max_length=50)  # e.g., 'movie', 'actor', 'director'
     tmdb_id = models.IntegerField(unique=True)
     cached_at = models.DateTimeField(auto_now_add=True)
+
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'movie')  # Verhindert doppelte Einträge
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title}"
