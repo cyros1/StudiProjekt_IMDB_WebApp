@@ -12,7 +12,7 @@ urlpatterns = [
     # Movie related URLs
     path("movies/", views.movie_list, name="movie_list"),
     path("movies/<int:pk>", views.movie_details, name="movie_details"),  # Movie detail page
-
+    path("movies/<str:pk>/", views.movie_detail, name="movie_detail"),  # Custom movie detail page
 
     # Actor related URLs
     path("actors/", views.actor_list, name="actor_list"),
@@ -24,6 +24,8 @@ urlpatterns = [
     # Director related URLs
     path("directors/", views.director_list, name="director_list"),
     path("directors/<int:pk>/", views.director_details, name="director_details"),  # Director detail page
+    path("directors/<str:pk>/", views.director_detail, name="director_detail"),  # Custom director detail page
+
 
     # Authentication URLs
     path("signup/", views.signup, name="signup"),  # Signup page

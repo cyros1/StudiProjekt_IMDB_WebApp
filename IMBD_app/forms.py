@@ -31,10 +31,10 @@ class ActorForm(forms.ModelForm):
 
 class DirectorForm(forms.ModelForm):
     class Meta:
-        model = Director
-        fields = ['name', 'biography', 'profile_path', 'custom_profile_image']
+        model = Actor
+        fields = ['name', 'biography', 'profile_path', 'custom_profile_image', 'custom_id']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter director name'}),
+            'name': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter actor name'}),
             'biography': forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Write a short biography'}),
             'profile_path': forms.URLInput(attrs={'class': 'form-field', 'placeholder': 'Enter profile image URL'}),
             'custom_profile_image': forms.ClearableFileInput(attrs={'class': 'form-field'}),  # File input widget
@@ -42,9 +42,12 @@ class DirectorForm(forms.ModelForm):
 
     def save(self, commit=True):
         director = super().save(commit=False)
+        
+        # If there's a custom profile image, use it and clear the profile_path
         if self.cleaned_data.get('custom_profile_image'):
             director.profile_path = None
             director.custom_profile_image = self.cleaned_data['custom_profile_image']
+        
         if commit:
             director.save()
         return director
@@ -54,7 +57,7 @@ class DirectorForm(forms.ModelForm):
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
-        fields = ['title', 'release_date', 'custom_backdrop_image', 'overview', 'rating', 'genres', 'actors', 'directors',]
+        fields = ['title', 'release_date', 'custom_backdrop_image', 'overview', 'rating', 'genres', 'actors', 'directors']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter movie title'}),
             'release_date': forms.DateInput(attrs={'class': 'form-field', 'placeholder': 'Enter release date'}),
@@ -67,20 +70,20 @@ class MovieForm(forms.ModelForm):
         }
 
     def save(self, commit=True):
-        actor = super().save(commit=False)
+        movie = super().save(commit=False)
         
-        # If there's a custom profile image, use it and clear the profile_path
-        if self.cleaned_data.get('custom_profile_image'):
-            actor.profile_path = None
-            actor.custom_profile_image = self.cleaned_data['custom_profile_image']
+        # Handle custom backdrop image
+        if self.cleaned_data.get('custom_backdrop_image'):
+            movie.backdrop_path = None
+            movie.custom_backdrop_image = self.cleaned_data['custom_backdrop_image']
 
-        # Generate and assign a custom ID
-        if not actor.custom_id:
-            actor.custom_id = generate_custom_id()
-
+        # Optionally, generate a custom ID for the movie (if applicable)
+        if not movie.tmdb_id:
+            movie.tmdb_id = generate_custom_id()  # Replace with actual logic if needed
+        
         if commit:
-            actor.save()
-        return actor
+            movie.save()
+        return movie
 
 
 class GenreForm(forms.ModelForm):

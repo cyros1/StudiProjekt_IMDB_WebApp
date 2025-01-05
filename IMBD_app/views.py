@@ -129,6 +129,24 @@ def movie_details(request, pk):
 
 
 
+def movie_detail(request, pk):
+    # Fetch actor by custom ID (not tmdb_id)
+    movie = Movie.objects.filter(custom_id=pk).first()
+    
+    if not movie:
+        messages.error(request, "movie not found.")
+        return redirect('IMBD_app:home')  # Redirect to create page or another appropriate page
+
+    # Get the top 5 movies the movie is known for
+    top_movies = movie.known_for_movies.all()[:5]
+
+    return render(request, "movies/movie_detail.html", {
+        "movie": movie,
+        "top_movies": top_movies,
+    })
+
+
+
 def all_movies(request):
     page_number = 1  # Default to page 1
     # You can get the page number from the request (e.g., URL query parameters)
@@ -209,6 +227,23 @@ def actor_detail(request, pk):
 
     return render(request, "actors/actor_detail.html", {
         "actor": actor,
+        "top_movies": top_movies,
+    })
+
+
+def director_detail(request, pk):
+    # Fetch actor by custom ID (not tmdb_id)
+    director = Director.objects.filter(custom_id=pk).first()
+    
+    if not director:
+        messages.error(request, "Actor not found.")
+        return redirect('IMBD_app:home')  # Redirect to create page or another appropriate page
+
+    # Get the top 5 movies the actor is known for
+    top_movies = director.known_for_movies.all()[:5]
+
+    return render(request, "directors/director_detail.html", {
+        "director": director,
         "top_movies": top_movies,
     })
 
@@ -346,10 +381,15 @@ def create(request):
         elif form_type == 'director':
             director_form = DirectorForm(request.POST, request.FILES)
             if director_form.is_valid():
-                director_form.save()
+                # Save the director form and generate custom ID if needed
+                director = director_form.save(commit=False)
+                director.custom_id = generate_custom_id()  # Generate custom ID if needed
+                director.save()
                 print("Director created successfully!")  # Debugging-Ausgabe
                 messages.success(request, "Director created successfully!")
-                return redirect('IMBD_app:create')  # Redirect to director list or another page
+                
+                # Redirect to director_detail view using the custom ID
+                return redirect('IMBD_app:director_detail', pk=director.custom_id)  # Redirect to the custom director detail page
             else:
                 print("ERROR: Director couldn't be created")
                 print(director_form.errors)
@@ -358,10 +398,15 @@ def create(request):
         elif form_type == 'movie':
             movie_form = MovieForm(request.POST, request.FILES)
             if movie_form.is_valid():
-                movie_form.save()
+                # Save the movie form and generate custom ID if needed
+                movie = movie_form.save(commit=False)
+                movie.tmdb_id = generate_custom_id()  # Generate custom ID if needed
+                movie.save()
                 print("Movie created successfully!")  # Debugging-Ausgabe
                 messages.success(request, "Movie created successfully!")
-                return redirect('IMBD_app:create')  # Redirect to movie list or another page
+                
+                # Redirect to movie_detail view using the tmdb_id or custom ID
+                return redirect('IMBD_app:movie_detail', pk=movie.tmdb_id)  # Redirect to the custom movie detail page
             else:
                 print("ERROR: Movie couldn't be created")
                 print(movie_form.errors)
@@ -372,6 +417,7 @@ def create(request):
         'director_form': director_form,
         'movie_form': movie_form,
     })
+
 
 
 def success(request):

@@ -15,6 +15,7 @@ class Movie(models.Model):
     tmdb_id = models.IntegerField(unique=True, null=True, blank=True)  # Allow null for custom entries
     title = models.CharField(max_length=255)
     release_date = models.DateField(null=True, blank=True)
+    custom_id = models.CharField(max_length=6, unique=True, null=True, blank=True)  # Unique 6-character ID for custom actors
     backdrop_path = models.CharField(max_length=255, null=True, blank=True)  # Path to backdrop image (TMDb)
     custom_backdrop_image = models.ImageField(  # Neues Feld für benutzerdefinierte Backdrops
         upload_to='movies/backdrops/',
@@ -78,6 +79,7 @@ class Actor(models.Model):
 class Director(models.Model):
     tmdb_id = models.IntegerField(unique=True, null=True, blank=True)  # Allow null for custom entries
     name = models.CharField(max_length=255)
+    custom_id = models.CharField(max_length=6, unique=True, null=True, blank=True)  # Unique 6-character ID for custom actors
     profile_path = models.CharField(max_length=255, null=True, blank=True)  # TMDb profile path
     custom_profile_image = models.ImageField(  # Neues Feld für benutzerdefinierte Profilbilder
         upload_to='directors/',
@@ -103,6 +105,7 @@ class Director(models.Model):
     
     def __str__(self):
         return self.name  # Anzeigen des Namens in der Dropdown-Liste
+
 
 class MovieActor(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="movie_actors")
