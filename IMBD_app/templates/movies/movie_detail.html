@@ -1,39 +1,80 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ director.name }}{% endblock %}
+{% block title %}{{ movie.title }}{% endblock %}
 
 {% block main %}
 <div class="min-h-screen bg-purple-200 text-text-white flex items-center justify-center p-4">
     <div class="max-w-4xl w-full bg-f-lighter-purple rounded-lg shadow-lg overflow-hidden">
-        <!-- Director Header: Profile Picture and Name -->
-        <div class="flex items-center p-6 space-x-6">
-            <!-- Director Profile Picture -->
-            <div class="flex-shrink-0">
-                <img src="{{ director.get_profile_picture }}" alt="{{ director.name }}" class="w-24 h-30 border-4 border-f-lighter-purple">
-            </div>
-            <!-- Director Name and Bio -->
-            <div>
-                <h1 class="text-4xl font-bold text-text-white">{{ director.name }} (ID: {{ director.custom_id }})</h1>
-                <p class="text-text-white mt-2">{{ director.biography|default:"Biography not available" }}</p>
-            </div>
+        <!-- Movie Banner -->
+        <div class="relative h-64 bg-cover bg-center" style="background-image: url('https://image.tmdb.org/t/p/w500{{ movie.backdrop_path }}');">
+            <div class="absolute inset-0 bg-dark-purple bg-opacity-60"></div>
         </div>
 
-        <!-- Top Movies the Director is Known For -->
+        <!-- Movie Details -->
+        <div class="p-6 space-y-4">
+            <h1 class="text-4xl font-bold text-text-white">{{ movie.title }}</h1>
+            <p class="text-text-white">Release Date: <span class="font-medium text-search-bar-purple">{{ movie.release_date|default:"No information available" }}</span></p>
+            <p class="text-text-white">{{ movie.overview|default:"No information available" }}</p>
+        </div>
+
+        <!-- Additional Info -->
         <div class="p-6 bg-f-border-purple border-t border-f-lighter-purple">
-            <h2 class="text-2xl font-semibold text-text-white mb-3">Top Movies</h2>
+            <h2 class="text-2xl font-semibold text-text-white mb-3">Additional Information</h2>
             <ul class="space-y-2">
-                {% if director.known_for_movies.all %}
-                    {% for movie in director.known_for_movies.all %}
-                        <!-- Use the tmdb_id for the movie link -->
-                        <li><a href="/movies/{{ movie.tmdb_id }}" class="text-search-bar-purple">{{ movie.title }}</a></li>
-                    {% endfor %}
-                {% else %}
-                    <li>No top movies available for this director.</li>
-                {% endif %}
+                <!-- Director Information -->
+                <li>
+                    <strong class="text-search-bar-purple">Director:</strong>
+                    {% if directors %}
+                        {% for director in directors %}
+                            {% if director.tmdb_id %}
+                                <a href="{% url 'IMBD_app:director_details' director.tmdb_id %}" class="text-blue-500 hover:underline">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}
+                            {% else %}
+                                <span>No information available</span>{% if not forloop.last %}, {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <span>No information available</span>
+                    {% endif %}
+                </li>
+
+                <!-- Top Actors -->
+                <li>
+                    <strong>Top Actors:</strong>
+                    {% if cast %}
+                        {% for movie_actor in cast %}
+                            {% if movie_actor.actor.tmdb_id %}
+                                <a href="{% url 'IMBD_app:actor_details' movie_actor.actor.tmdb_id %}" class="text-blue-500 hover:underline">
+                                    {{ movie_actor.actor.name }}
+                                </a>
+                                {% if not forloop.last %}, {% endif %}
+                            {% else %}
+                                <span>No information available</span>{% if not forloop.last %}, {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <span>No information available</span>
+                    {% endif %}
+                </li>
+
+                <!-- Genre Information -->
+                <li>
+                    <strong class="text-search-bar-purple">Genre:</strong>
+                    {% if movie.genres.all %}
+                        {% for genre in movie.genres.all %}
+                            <span>{{ genre.name }}{% if not forloop.last %}, {% endif %}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span>No information available</span>
+                    {% endif %}
+                </li>
+
+                <!-- Movie Rating -->
+                <li>
+                    <strong class="text-search-bar-purple">Rating:</strong> 
+                    {{ movie.rating|default:"No information available" }} / 10
+                </li>
             </ul>
         </div>
-
     </div>
 </div>
-
 {% endblock %}

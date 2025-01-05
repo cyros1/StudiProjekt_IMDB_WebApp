@@ -130,20 +130,25 @@ def movie_details(request, pk):
 
 
 def movie_detail(request, pk):
-    # Fetch actor by custom ID (not tmdb_id)
+    # Fetch movie by custom ID (not tmdb_id)
     movie = Movie.objects.filter(custom_id=pk).first()
     
     if not movie:
-        messages.error(request, "movie not found.")
+        messages.error(request, "Movie not found.")
         return redirect('IMBD_app:home')  # Redirect to create page or another appropriate page
 
-    # Get the top 5 movies the movie is known for
-    top_movies = movie.known_for_movies.all()[:5]
+    # Get the actors associated with this movie
+    actors = movie.actors.all()  # Fetch actors related to the movie
+
+    # Get the directors associated with this movie
+    directors = movie.directors.all()  # Fetch directors related to the movie
 
     return render(request, "movies/movie_detail.html", {
         "movie": movie,
-        "top_movies": top_movies,
+        "actors": actors,
+        "directors": directors,
     })
+
 
 
 
@@ -400,13 +405,16 @@ def create(request):
             if movie_form.is_valid():
                 # Save the movie form and generate custom ID if needed
                 movie = movie_form.save(commit=False)
-                movie.tmdb_id = generate_custom_id()  # Generate custom ID if needed
+                
+                # Only set the custom_id and leave tmdb_id as None
+                movie.custom_id = generate_custom_id()  # Generate custom ID
+                movie.tmdb_id = None  # Ensure tmdb_id is left blank for custom entries
                 movie.save()
                 print("Movie created successfully!")  # Debugging-Ausgabe
                 messages.success(request, "Movie created successfully!")
                 
-                # Redirect to movie_detail view using the tmdb_id or custom ID
-                return redirect('IMBD_app:movie_detail', pk=movie.tmdb_id)  # Redirect to the custom movie detail page
+                # Redirect to movie_detail view using the custom ID
+                return redirect('IMBD_app:movie_detail', pk=movie.custom_id)  # Redirect to the custom movie detail page
             else:
                 print("ERROR: Movie couldn't be created")
                 print(movie_form.errors)
@@ -417,6 +425,7 @@ def create(request):
         'director_form': director_form,
         'movie_form': movie_form,
     })
+
 
 
 
