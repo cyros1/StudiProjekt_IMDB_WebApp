@@ -828,12 +828,12 @@ video {
   margin-top: 1rem;
 }
 
-.mt-8 {
-  margin-top: 2rem;
-}
-
 .mt-6 {
   margin-top: 1.5rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
 }
 
 .block {
@@ -921,6 +921,10 @@ video {
   height: 100%;
 }
 
+.h-logo-large {
+  height: 50rem;
+}
+
 .h-screen {
   height: 100vh;
 }
@@ -967,6 +971,10 @@ video {
 
 .w-96 {
   width: 24rem;
+}
+
+.w-auto {
+  width: auto;
 }
 
 .w-full {
@@ -1663,11 +1671,6 @@ video {
 .hover\:bg-hover-button:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(122 77 148 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:bg-light-pink:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(223 153 216 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:underline:hover {

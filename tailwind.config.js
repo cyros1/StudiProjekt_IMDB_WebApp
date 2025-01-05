@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
       extend: {
+        height: {
+          'logo-large': '50rem', // Custom height for the logo
+        },
         colors:{
           "dark-purple": "#4E299B",
           "light-pink": "#DF99D8",

@@ -49,7 +49,7 @@ def fetch_movie_credits(movie_id):
     return fetch_tmdb_data(f"movie/{movie_id}/credits", params={"language": "en-US"})
 
 # Details of a specific movie 
-def movie_details(request, pk):  # 'pk' statt 'tmdb_id'
+def movie_details(request, pk):  
     movie = Movie.objects.filter(tmdb_id=pk).first()
 
     if not movie:

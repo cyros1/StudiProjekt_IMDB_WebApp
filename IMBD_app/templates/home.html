@@ -24,29 +24,7 @@
         <div class="landing-page flex flex-col items-center justify-center min-h-screen">
             <!-- Logo (initially centered) -->
             <div id="logo" class="logo-container mb-4 transition-all duration-500 ease-in-out">
-                <img src="{% static 'images/logo_full.svg' %}" alt="Logo" class="h-96">
-            </div>
-
-            <!-- Search Bar -->
-                <div id="search-bar" class="search-bar-container transition-all duration-500 ease-in-out">
-
-                    {% comment %} Alter Search Bar Code damit mich Lukas nicht lyncht:
-                    <form method="get" action="{% url 'IMBD_app:movie_list' %}">
-                        <input name='q' type="text" placeholder="Search..." class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </form> 
-                    {% endcomment %}
-
-                    <form method="get" action="{% url 'IMBD_app:movie_list' %}" style="display: flex; gap: 10px;">
-                        <input type="text" name="q" placeholder="Search..." value="{{ query }}" class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        
-                        <select name="category" class="px-4 py-2 text-lg rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="movie" {% if category == "movie" %}selected{% endif %}>Movies</option>
-                            <option value="actor" {% if category == "actor" %}selected{% endif %}>Actors</option>
-                            <option value="director" {% if category == "director" %}selected{% endif %}>Directors</option>
-                            <option value="genre" {% if category == "genre" %}selected{% endif %}>Genre</option>
-                        </select>
-                    </form>
-                    
+                <img src="../static/images/logo_full.svg" alt="Logo" class="h-logo-large">
             </div>
         </div>
     </div>
