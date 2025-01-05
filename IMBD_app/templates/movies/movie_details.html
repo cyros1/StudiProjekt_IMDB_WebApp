@@ -24,23 +24,23 @@
                 <li>
                     <strong class="text-search-bar-purple">Director:</strong> 
                     {% for director in directors %}
-                        <span>{{ director }}{% if not forloop.last %}, {% endif %}</span>
+                        <span>{{ director.name }}{% if not forloop.last %}, {% endif %}</span>
                     {% endfor %}
                 </li>
                 <li>
                     <strong class="text-search-bar-purple">Top Actors:</strong>
-                    {% for actor in cast %}
-                        <span>{{ actor.name }}{% if not forloop.last %}, {% endif %}</span>
+                    {% for movie_actor in cast %}
+                        <span>{{ movie_actor.actor.name }}{% if not forloop.last %}, {% endif %}</span>
                     {% endfor %}
-                </li>
+                </li>                
                 <li>
                     <strong class="text-search-bar-purple">Genre:</strong> 
-                    {% for genre in movie.genres %}
+                    {% for genre in movie.genres.all %}
                         <span>{{ genre.name }}{% if not forloop.last %}, {% endif %}</span>
                     {% endfor %}
                 </li>
                 <li>
-                    <strong class="text-search-bar-purple">Rating:</strong> {{ movie.vote_average }} / 10
+                    <strong class="text-search-bar-purple">Rating:</strong> {{ movie.rating }} / 10
                 </li>
             </ul>
         </div>

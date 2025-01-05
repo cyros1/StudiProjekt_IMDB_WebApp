@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import Movie, Actor, Director
 from .forms import ActorForm, DirectorForm, MovieForm
-from .utils.tmdb import fetch_tmdb_data
+from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login as auth_login, logout
@@ -41,57 +41,22 @@ def home(request):
         "top_directors" : top_directors
     })
 
-
-
-# TODO
-# List of all movies
-def movie_list(request):
-    query = request.GET.get('q', '').strip()  # Suchbegriff
-    category = request.GET.get('category', 'movie')  # Standardkategorie "movie"
-
-    # Datenbankabfragen
-    movies_db = Movie.objects.none()
-
-    # TMDB-Abfragen
-    movies_tmdb = []
-
-    if query:
-            # Lokale Filme filtern
-            movies_db = Movie.objects.filter(
-                Q(title__icontains=query) | Q(genre__icontains=query)
-            )
-            # TMDB-Filme suchen
-            tmdb_response = fetch_tmdb_data("search/movie", params={"query": query})
-            movies_tmdb = tmdb_response.get("results", [])
-
-
-    context = {
-        "query": query,
-        "category": category,
-        "movies_db": movies_db,
-        "movies_tmdb": movies_tmdb,
-    }
-    return render(request, "movies/movie_list.html", context)
-
-
-
 # Function to fetch movie credits (cast and crew)
 def fetch_movie_credits(movie_id):
     return fetch_tmdb_data(f"movie/{movie_id}/credits", params={"language": "en-US"})
 
 # Details of a specific movie 
 def movie_details(request, pk):
-    movie = fetch_tmdb_data(f"movie/{pk}", params={"language": "en-US"})
+    # Check if the movie exists in the database
+    movie = Movie.objects.filter(tmdb_id=pk).first()
 
-    # Fetch movie credits:
-    credits = fetch_movie_credits(pk)
-    cast = credits.get('cast', [])
-    crew = credits.get('crew', [])
+    if not movie:
+        # Fetch and store movie in the database if not found
+        movie = fetch_movie_from_tmdb(pk)
 
-    # Get director from the crew
-    directors = [member['name'] for member in crew if member['job'] == 'Director']
-    # Select only top 5 actors
-    top_actors = cast[:5] 
+    # Fetch actors and directors from the database
+    top_actors = movie.movie_actors.all()[:5] 
+    directors = movie.directors.all()
 
     return render(request, "movies/movie_details.html", {
         "movie": movie,
@@ -100,41 +65,6 @@ def movie_details(request, pk):
     })
 
 
-
-
-
-
-# TODO
-# List of all actors (mock data)
-def actor_list(request):
-    query = request.GET.get('q', '').strip()  # Suchbegriff
-    category = request.GET.get('category', 'actor')  # Standardkategorie "movie"
-
-    # Datenbankabfragen
-    actors_db = Actor.objects.none()
-
-    # TMDB-Abfragen
-    actors_tmdb = []
-
-    if query:
-            # Lokale Schauspieler filtern
-            actors_db = Actor.objects.filter(
-                Q(name__icontains=query) | Q(surname__icontains=query)
-            ).order_by('name')  # Sortiere nach Namen (alphabetisch)
-            # TMDB-Personen suchen
-            tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
-            actors_tmdb = [
-                person for person in tmdb_response.get("results", [])
-                if person.get("known_for_department") == "Acting"
-            ]
-
-    context = {
-        "query": query,
-        "category": category,
-        "actors_db": actors_db,
-        "actors_tmdb": actors_tmdb,
-    }
-    return render(request, "actors/actor_list.html", context)
 
 
 # Details of a specific actor
@@ -153,40 +83,6 @@ def actor_details(request, pk):
         "top_movies": top_movies,
     })
 
-
-
-
-# TODO
-# List of all directors (mock data)
-def director_list(request):
-    query = request.GET.get('q', '').strip()  # Suchbegriff
-    category = request.GET.get('category', 'director')  # Standardkategorie "movie"
-
-    # Datenbankabfragen
-    directors_db = Director.objects.none()
-
-    # TMDB-Abfragen
-    directors_tmdb = []
-
-    if query:
-            # Lokale Regisseure filtern
-            directors_db = Director.objects.filter(
-                Q(name__icontains=query) | Q(surname__icontains=query)
-            )
-            # TMDB-Personen suchen
-            tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
-            directors_tmdb = [
-                person for person in tmdb_response.get("results", [])
-                if person.get("known_for_department") == "Directing"
-            ]
-
-    context = {
-        "query": query,
-        "category": category,
-        "directors_db": directors_db,
-        "directors_tmdb": directors_tmdb,
-    }
-    return render(request, "directors/director_list.html", context)
 
 
 # Details of a specific director 
@@ -315,3 +211,105 @@ def success(request):
 
 # from IMBD_app.models import Film
 # Film.objects.create(titel="Inception", veroeffentlichungsdatum="2010-07-16", genre="Science Fiction", beschreibung="Ein Dieb stiehlt Ideen aus Träumen.")
+
+
+
+
+
+
+
+
+# alles für search bar
+
+def movie_list(request):
+    query = request.GET.get('q', '').strip()  # Suchbegriff
+    category = request.GET.get('category', 'movie')  # Standardkategorie "movie"
+
+    # Datenbankabfragen
+    movies_db = Movie.objects.none()
+
+    # TMDB-Abfragen
+    movies_tmdb = []
+
+    if query:
+            # Lokale Filme filtern
+            movies_db = Movie.objects.filter(
+                Q(title__icontains=query) | Q(genre__icontains=query)
+            )
+            # TMDB-Filme suchen
+            tmdb_response = fetch_tmdb_data("search/movie", params={"query": query})
+            movies_tmdb = tmdb_response.get("results", [])
+
+
+    context = {
+        "query": query,
+        "category": category,
+        "movies_db": movies_db,
+        "movies_tmdb": movies_tmdb,
+    }
+    return render(request, "movies/movie_list.html", context)
+
+
+# List of all directors (mock data)
+def director_list(request):
+    query = request.GET.get('q', '').strip()  # Suchbegriff
+    category = request.GET.get('category', 'director')  # Standardkategorie "movie"
+
+    # Datenbankabfragen
+    directors_db = Director.objects.none()
+
+    # TMDB-Abfragen
+    directors_tmdb = []
+
+    if query:
+            # Lokale Regisseure filtern
+            directors_db = Director.objects.filter(
+                Q(name__icontains=query) | Q(surname__icontains=query)
+            )
+            # TMDB-Personen suchen
+            tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
+            directors_tmdb = [
+                person for person in tmdb_response.get("results", [])
+                if person.get("known_for_department") == "Directing"
+            ]
+
+    context = {
+        "query": query,
+        "category": category,
+        "directors_db": directors_db,
+        "directors_tmdb": directors_tmdb,
+    }
+    return render(request, "directors/director_list.html", context)
+
+
+# TODO
+# List of all actors (mock data)
+def actor_list(request):
+    query = request.GET.get('q', '').strip()  # Suchbegriff
+    category = request.GET.get('category', 'actor')  # Standardkategorie "movie"
+
+    # Datenbankabfragen
+    actors_db = Actor.objects.none()
+
+    # TMDB-Abfragen
+    actors_tmdb = []
+
+    if query:
+            # Lokale Schauspieler filtern
+            actors_db = Actor.objects.filter(
+                Q(name__icontains=query) | Q(surname__icontains=query)
+            ).order_by('name')  # Sortiere nach Namen (alphabetisch)
+            # TMDB-Personen suchen
+            tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
+            actors_tmdb = [
+                person for person in tmdb_response.get("results", [])
+                if person.get("known_for_department") == "Acting"
+            ]
+
+    context = {
+        "query": query,
+        "category": category,
+        "actors_db": actors_db,
+        "actors_tmdb": actors_tmdb,
+    }
+    return render(request, "actors/actor_list.html", context)
