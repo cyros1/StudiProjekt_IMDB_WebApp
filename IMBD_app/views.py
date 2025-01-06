@@ -65,7 +65,7 @@ def movie_details(request, pk):
     # Hole die API-Bewertung
     genres = movie.genres.all()
     directors = movie.directors.all()
-    top_actors = movie.movie_actors.all()[:5]
+    top_actors = movie.actors.all()[:5]
 
     # Hole Kommentare und User-Bewertung
     comments = movie.comments.select_related('user').order_by('-created_at')

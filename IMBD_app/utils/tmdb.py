@@ -1,6 +1,6 @@
 from datetime import timedelta
 from django.utils.timezone import now
-from ..models import Movie, Genre, Actor, Director, CachedData, MovieActor
+from ..models import Movie, Genre, Actor, Director, CachedData
 import requests
 import random, string
 
@@ -73,7 +73,7 @@ def fetch_movie_from_tmdb(movie_id):
                 movie.directors.add(director)
 
         # Update actors and roles
-        movie.movie_actors.all().delete()
+        movie.actors.all().delete()
         top_actors = credits.get("cast", [])[:5]
         for actor_data in top_actors:
             actor, _ = Actor.objects.update_or_create(
@@ -83,7 +83,7 @@ def fetch_movie_from_tmdb(movie_id):
                     "profile_path": actor_data.get("profile_path", "")
                 }
             )
-            MovieActor.objects.create(
+            Actor.objects.create(
                 movie=movie,
                 actor=actor,
                 role=actor_data.get("character", "No Role Available")

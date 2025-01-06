@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Actor, Director, Movie, UserRating, Genre, MovieActor, UserComment, UserRating, CachedData
+from .models import Actor, Director, Movie, UserRating, Genre, UserComment, UserRating, CachedData
 
 # Registering the Genre model
 @admin.register(Genre)
@@ -25,13 +25,6 @@ class ActorAdmin(admin.ModelAdmin):
 class DirectorAdmin(admin.ModelAdmin):
     list_display = ('name', 'tmdb_id', 'cached_at')  # Fields to display
     search_fields = ('name', 'tmdb_id')  # Enable search by name or TMDb ID
-
-# Registering the MovieActor model
-@admin.register(MovieActor)
-class MovieActorAdmin(admin.ModelAdmin):
-    list_display = ('movie', 'actor', 'role')  # Fields to display
-    search_fields = ('movie__title', 'actor__name')  # Enable search by movie title or actor name
-    list_filter = ('movie', 'actor')  # Filter by movie and actor
 
 # Registering the UserComment model
 @admin.register(UserComment)

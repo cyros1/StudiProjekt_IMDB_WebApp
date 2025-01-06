@@ -105,14 +105,7 @@ class Director(models.Model):
     
     def __str__(self):
         return self.name  # Anzeigen des Namens in der Dropdown-Liste
-
-
-class MovieActor(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="movie_actors")
-    actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
-    role = models.CharField(max_length=255, null=True, blank=True)  # Optional role
-
-
+    
 class UserComment(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Nutzer-Referenz
