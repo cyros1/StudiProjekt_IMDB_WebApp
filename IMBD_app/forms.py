@@ -31,7 +31,7 @@ class ActorForm(forms.ModelForm):
 
 class DirectorForm(forms.ModelForm):
     class Meta:
-        model = Actor
+        model = Director
         fields = ['name', 'biography', 'profile_path', 'custom_profile_image', 'custom_id']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Enter actor name'}),

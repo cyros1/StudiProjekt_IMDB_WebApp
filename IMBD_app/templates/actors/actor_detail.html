@@ -9,7 +9,7 @@
         <div class="flex items-center p-6 space-x-6">
             <!-- Actor Profile Picture -->
             <div class="flex-shrink-0">
-                <img src="https://image.tmdb.org/t/p/w500{{ actor.profile_path|default:'/path/to/placeholder-image.jpg' }}" alt="{{ actor.name }}" class="w-24 h-30 border-4 border-f-lighter-purple">
+                <img src="{{ actor.get_profile_picture}}" alt="{{ actor.name }}" class="w-24 h-30 border-4 border-f-lighter-purple">
             </div>
             <!-- Actor Name and Bio -->
             <div>
