@@ -73,7 +73,7 @@ def fetch_movie_from_tmdb(movie_id):
                 movie.directors.add(director)
 
         # Update actors and roles
-        movie.actors.all().delete()
+        movie.actors.clear()
         actors = credits.get("cast", [])[:5]
         for actor_data in actors:
             actors, _  = Actor.objects.update_or_create(

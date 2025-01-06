@@ -127,6 +127,7 @@ def movie_details(request, pk):
         "user_watchlist": user_watchlist,  # Aktuelle Watchlist des Nutzers als Liste
         "comment_form": comment_form,
         "rating_form": rating_form,
+        "top_actors": top_actors,
     })
 
 
@@ -208,13 +209,20 @@ def recent_movies(request):
 # Actor Details (with database saving)
 def actor_details(request, pk):
     # Fetch actor details from the database or via API
-    actor = Actor.objects.filter(tmdb_id=pk).first()
+    actor = fetch_tmdb_data(f"person/{pk}", params={"language": "en-US"})
 
-    if not actor:
-        actor = fetch_actor_from_tmdb(pk)
+    movie_credits = fetch_tmdb_data(f"person/{pk}/movie_credits", params={"language": "en-US"})
+
 
     # Get the top 5 movies the actor is known for
-    top_movies = actor.known_for_movies.all()[:5]
+    top_movies = movie_credits.get('cast', [])[:5]
+
+    unique_movies = []
+    seen_ids = set()
+    for movie in top_movies:
+        if movie['id'] not in seen_ids:
+            unique_movies.append(movie)
+            seen_ids.add(movie['id'])
 
     return render(request, "actors/actor_details.html", {
         "actor": actor,
