@@ -74,20 +74,16 @@ def fetch_movie_from_tmdb(movie_id):
 
         # Update actors and roles
         movie.actors.all().delete()
-        top_actors = credits.get("cast", [])[:5]
-        for actor_data in top_actors:
-            actor, _ = Actor.objects.update_or_create(
+        actors = credits.get("cast", [])[:5]
+        for actor_data in actors:
+            actors, _  = Actor.objects.update_or_create(
                 tmdb_id=actor_data.get("id"),
                 defaults={
                     "name": actor_data.get("name", "No Name Available"),
                     "profile_path": actor_data.get("profile_path", "")
                 }
             )
-            Actor.objects.create(
-                movie=movie,
-                actor=actor,
-                role=actor_data.get("character", "No Role Available")
-            )
+            movie.actors.add(actors)
 
         movie.save()
         return movie

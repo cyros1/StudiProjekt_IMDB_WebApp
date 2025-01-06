@@ -40,20 +40,21 @@
                 <!-- Top Actors -->
                 <li>
                     <strong>Top Actors:</strong>
-                    {% if cast %}
-                        {% for movie_actor in cast %}
-                            {% if movie_actor.actor.tmdb_id %}
-                                <a href="{% url 'IMBD_app:actor_details' movie_actor.actor.tmdb_id %}" class="text-blue-500 hover:underline">
-                                    {{ movie_actor.actor.name }}
-                                </a>
-                                {% if not forloop.last %}, {% endif %}
-                            {% else %}
-                                <span>No information available</span>{% if not forloop.last %}, {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        <span>No information available</span>
-                    {% endif %}
+{% if movie.actors.all %}
+    {% for actor in movie.actors.all %}
+        {% if actor.tmdb_id %}
+            <a href="{% url 'IMBD_app:actor_details' actor.tmdb_id %}" class="text-blue-500 hover:underline">
+                {{ actor.name }}
+            </a>
+            {% if not forloop.last %}, {% endif %}
+        {% else %}
+            <span>{{ actor.name }} (Custom Entry)</span>
+            {% if not forloop.last %}, {% endif %}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <span>No information available</span>
+{% endif %}
                 </li>
 
                 <!-- Genre Information -->
