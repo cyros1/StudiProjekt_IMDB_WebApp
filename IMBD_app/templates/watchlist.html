@@ -10,22 +10,22 @@
 <div class="p-6" style="margin-top: 3cm;">
     <h1 class="text-2xl font-bold mb-4">My Watchlist</h1>
 
-    {% if movie_titles %}
+    {% if movies %}
         <div class="cards">
-            {% for item in movie_titles %}
+            {% for movie in movies %}
             <div class="card">
                 <!-- Image -->
                 <div class="card-image mb-2">
-                    <img src="https://image.tmdb.org/t/p/w500{{ item.movie.poster_path }}" alt="{{ item.movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}">
                 </div>
-                <!-- Movie Title + Descr -->
+                <!-- Movie Title + Description -->
                 <div>
-                    <p class="card-title">{{ item.movie.title }}</p>
-                    <p class="card-description">{{ item.movie.vote_average }}</p>
+                    <p class="card-title">{{ movie.title }}</p>
+                    <p class="card-description">Rating: {{ movie.vote_average }}</p>
                 </div>
                 <!-- Button to Movie Details -->
                 <button class="card-button hover:underline"
-                    onclick="window.location.href='/movies/{{ item.movie.tmdb_id }}'">Show More</button>
+                    onclick="window.location.href='/movies/{{ movie.id }}'">Show More</button>
             </div>
             {% endfor %}
         </div>

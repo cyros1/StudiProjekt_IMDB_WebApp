@@ -109,7 +109,7 @@ def movie_details(request, pk):
             new_rating.save()
 
             messages.success(request, "Your comment and rating have been posted.")
-            return redirect('IMBD_app:movie_details', pk=pk)
+            return redirect('/movies/{{movie.id}}', pk=pk)
 
 
     else:
@@ -604,9 +604,18 @@ def watchlist_view(request):
         messages.error(request, "You need to be logged in to view your watchlist.")
         return redirect('IMBD_app:user_login')
 
-    # Hole die Watchlist des aktuellen Benutzers
+    # Fetch the user's watchlist
     watchlist = Watchlist.objects.filter(user=request.user)
-    
+    movies = []
+
+    for item in watchlist:
+        # Fetch TMDb data for each movie in the watchlist
+        tmdb_id = item.movie.tmdb_id
+        movie_data = fetch_tmdb_data(f"movie/{tmdb_id}", params={"language": "en-US"})
+        if movie_data:
+            movies.append(movie_data)
+
     return render(request, "watchlist.html", {
-        "movie_titles": watchlist
+        "movie_titles": watchlist,
+        "movies": movies,
     })
