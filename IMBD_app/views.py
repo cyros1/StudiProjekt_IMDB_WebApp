@@ -111,6 +111,7 @@ def movie_details(request, pk):
             messages.success(request, "Your comment and rating have been posted.")
             return redirect('IMBD_app:movie_details', pk=pk)
 
+
     else:
         # Initialisiere Formulare
         comment_form = UserCommentForm()
@@ -574,29 +575,27 @@ def actor_list(request):
 
 def toggle_watchlist(request, pk):
     if request.method == "POST" and request.user.is_authenticated:
-        # Prüfen, ob der Film in der Datenbank existiert
+        # Prüfen, ob der Film existiert
         movie = Movie.objects.filter(tmdb_id=pk).first()
-        
-        # Wenn der Film nicht existiert, aus der TMDB-API laden
         if not movie:
-            movie = fetch_movie_from_tmdb(pk)
+            messages.error(request, "Movie not found.")
+            return redirect('IMBD_app:movie_list')  # Fallback zur Filmübersicht
 
-        # Prüfen, ob der Film in der Watchlist des Benutzers ist
+        # Toggle-Funktion: Film hinzufügen oder entfernen
         watchlist_item = Watchlist.objects.filter(user=request.user, movie=movie).first()
-
         if watchlist_item:
-            # Film aus der Watchlist entfernen
             watchlist_item.delete()
-            messages.success(request, f"'{movie.title}' has been removed from your watchlist.")
+            messages.success(request, f"'{movie.title}' wurde aus Ihrer Watchlist entfernt.")
         else:
-            # Film zur Watchlist hinzufügen (nur Titel verwenden)
             Watchlist.objects.create(user=request.user, movie=movie)
-            messages.success(request, f"'{movie.title}' has been added to your watchlist.")
+            messages.success(request, f"'{movie.title}' wurde Ihrer Watchlist hinzugefügt.")
 
-        return redirect('IMBD_app:movie_details', pk=pk)
+        # Zurück zur vorherigen Seite (Watchlist oder Movie-Details)
+        return redirect(request.META.get('HTTP_REFERER', 'IMBD_app:watchlist'))
     else:
-        messages.error(request, "You need to be logged in to modify your watchlist.")
+        messages.error(request, "You must be logged in to modify your watchlist.")
         return redirect('IMBD_app:user_login')
+
 
 
 
@@ -605,7 +604,9 @@ def watchlist_view(request):
         messages.error(request, "You need to be logged in to view your watchlist.")
         return redirect('IMBD_app:user_login')
 
-    watchlist_items = Watchlist.objects.filter(user=request.user)
+    # Hole die Watchlist des aktuellen Benutzers
+    watchlist = Watchlist.objects.filter(user=request.user)
+
     return render(request, "watchlist.html", {
-        "movie_titles": watchlist_items
+        "movie_titles": watchlist
     })

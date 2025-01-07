@@ -10,12 +10,15 @@
         <ul>
             {% for item in movie_titles %}
                 <li class="mb-4 flex items-center">
-                    <span class="text-lg font-semibold">{{ item.movie.title }}</span>
+                    <!-- Der Filmtitel ist jetzt ein anklickbarer Link -->
+                    <a href="{% url 'IMBD_app:movie_details' item.movie.tmdb_id %}" class="text-lg font-semibold text-blue-500 hover:underline">
+                        {{ item.movie.title }}
+                    </a>
                     <form method="post" action="{% url 'IMBD_app:toggle_watchlist' item.movie.tmdb_id %}" class="ml-4">
                         {% csrf_token %}
                         <button type="submit" 
                                 class="p-2 bg-red-500 text-white rounded hover:bg-red-600">
-                            Remove 
+                            Remove
                         </button>
                     </form>
                 </li>

@@ -74,7 +74,13 @@
                 <li>
                     <strong class="text-search-bar-purple">Rating:</strong> 
                     {{ movie.rating|default:"No information available" }} / 10
+
                 </li>
+
+                <li>
+                    <strong class="text-search-bar-purple">User Rating:</strong> {{ user_average_rating|floatformat:1|default:"No Ratings Yet" }} / 10
+                </li>
+
             </ul>
         </div>
 
