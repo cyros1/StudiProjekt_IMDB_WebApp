@@ -90,7 +90,7 @@ def movie_details(request, pk):
                 messages.success(request, f"'{movie.title}' wurde Ihrer Watchlist hinzugefügt.")
 
             # Nach der Änderung der Watchlist zurück zur Detailseite
-            return redirect('IMBD_app:movie_details', pk=pk)
+            return redirect('IMBD_app:movie_details movie.id', pk=pk)
 
         # Kommentare und Bewertungen speichern
         comment_form = UserCommentForm(request.POST)

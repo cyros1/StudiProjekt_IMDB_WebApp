@@ -28,8 +28,8 @@
                         <p class="card-description text-gray-600">{{ movie.vote_average }}</p>
                     </div>
                     <!-- Button to Movie Details -->
-                    <button class="card-button">
-                        <a href="{% url 'IMBD_app:movie_details' movie.id %}">Show More</a>
+                    <button class="card-button hover:underline"
+                        onclick="window.location.href='/movies/{{ movie.id }}'">Show More
                     </button>
                 </div>
                 {% endfor %}

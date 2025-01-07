@@ -39,7 +39,7 @@
 
                 <!-- Top Actors -->
                 <li>
-                    <strong>Top Actors:</strong>
+                    <strong class="text-search-bar-purple">Top Actors:</strong>
                     {% if top_actors %}
                         {% for actor in top_actors %}
                             {% if actor.id %}
@@ -84,11 +84,11 @@
             <form method="post" action="{% url 'IMBD_app:toggle_watchlist' movie.tmdb_id %}">
                 {% csrf_token %}
                 {% if movie.tmdb_id in user_watchlist %}
-                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                    <button type="submit" onclick="window.location.href='/movies/{{ movie.id }}'"class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
                         Remove from Watchlist
                     </button>
                 {% else %}
-                    <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                    <button type="submit" onclick="window.location.href='/movies/{{ movie.id }}'" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
                         Add to Watchlist
                     </button>
                 {% endif %}

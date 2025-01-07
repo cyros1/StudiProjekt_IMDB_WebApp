@@ -48,15 +48,15 @@
                         <p class="card-description">{{ movie.vote_average}}</p>
                     </div>
                     <!-- Button to Movie Details -->
-                    <button class="card-button">
-                        <a href="/movies/{{ movie.id }}">Show More</a></button>
+                    <button class="card-button hover:underline"
+                        onclick="window.location.href='/movies/{{ movie.id }}'">Show More</button>
                 </div>
                 {% endfor %}
             </div>
         </section>
 
     
-        <!-- Add more sections as needed -->
+        <!-- TMDB Actors sections -->
         <section class="category mb-10">
             <h2 class="text-2xl font-bold mb-4">Top Actors</h2>
             <div class="cards">
@@ -66,14 +66,14 @@
                     <div class="card-image mb-2">
                         <img src="https://image.tmdb.org/t/p/w500{{ actor.profile_path }}" alt="{{ actor.name }}">
                     </div>
-                    <!-- Movie Title + Descr -->
+                    <!-- Actor Title + Descr -->
                     <div>
                         <p class="card-title">{{ actor.name }}</p>
                         <p class="card-description">{{ actor.popularity}}</p>
                     </div>
-                    <!-- Button to Movie Details -->
-                    <button class="card-button">
-                        <a href="/actors/{{ actor.id }}">Show More</a></button>
+                    <!-- Button to Actor Details -->
+                    <button class="card-button hover:underline"
+                        onclick="window.location.href='/actors/{{ actor.id }}'">Show More</button>
                 </div>
                 {% endfor %}
             </div>
@@ -95,9 +95,8 @@
                         <p class="card-description">{{ actor.biography|default:"No biography available" }}</p>
                     </div>
                     <!-- Button to Actor Details -->
-                    <button class="card-button">
-                        <a href="/actors/{{ actor.custom_id }}">Show More</a>
-                    </button>
+                    <button class="card-button hover:underline"
+                        onclick="window.location.href='/actors/{{ actor.custom_id }}'">Show More</button>
                 </div>
                 {% endfor %}
             </div>
