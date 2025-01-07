@@ -606,7 +606,7 @@ def watchlist_view(request):
 
     # Hole die Watchlist des aktuellen Benutzers
     watchlist = Watchlist.objects.filter(user=request.user)
-
+    
     return render(request, "watchlist.html", {
         "movie_titles": watchlist
     })

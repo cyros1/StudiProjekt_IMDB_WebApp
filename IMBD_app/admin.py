@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Actor, Director, Movie, UserRating, Genre, UserComment, UserRating, CachedData
+from .models import Actor, Director, Movie, UserRating, Genre, UserComment, UserRating, CachedData, Watchlist
 
 # Registering the Genre model
 @admin.register(Genre)
@@ -47,3 +47,8 @@ class CachedDataAdmin(admin.ModelAdmin):
     search_fields = ('model_type', 'tmdb_id')  # Enable search by model type or TMDb ID
     list_filter = ('model_type',)  # Filter by model type
 
+@admin.register(Watchlist)
+class WatchlistAdmin(admin.ModelAdmin):
+    list_display = ('movie', 'user')  # Fields to display
+    search_fields = ('movie', 'user')  # Enable search by title or TMDb ID
+    list_filter = ('movie', 'user')  # Add filters to the list view
