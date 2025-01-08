@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.db.models import Avg
 from .forms import UserCommentForm, UserRatingForm
 from .models import Movie, Watchlist
+from django.urls import reverse
 import random, string
 # Create your views here.
 
@@ -109,7 +110,7 @@ def movie_details(request, pk):
             new_rating.save()
 
             messages.success(request, "Your comment and rating have been posted.")
-            return redirect('/movies/{{movie.id}}', pk=pk)
+            return redirect('IMBD_app:movie_details movie.id', pk=pk)
 
 
     else:
