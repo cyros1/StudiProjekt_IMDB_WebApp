@@ -1,37 +1,84 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Movie List{% endblock %}
+
 {% block main %}
-<br><br><br><br>
-<h1>Movie List</h1>
-<h2>Search Results for "{{ query }}" in {{ category|title }}</h2>
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Movie List</h1>
+    <h2 class="text-xl font-semibold mb-4">Search Results for "{{ query }}" in {{ category|title }}</h2>
 
-<!-- Local Movies -->
-<h3>Local Movies</h3>
-<ul>
-    {% for movie in movies_db %}
-        <div>
-            <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.tmdb_id %}">{{ movie.title }}</a></h4>
-            <p>Genres: {% for genre in movie.genres.all %}{{ genre.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-        </div>
-    {% empty %}
-        <p>No local movies found.</p>
-    {% endfor %}
-</ul>
+    <!-- Local Movies Section -->
+    <section class="category mb-10">
+        <h3 class="text-2xl font-bold mb-4">Local Movies</h3>
+        {% if movies_db %}
+            <div class="grid grid-cols-3 gap-6">
+                {% for movie in movies_db %}
+                <div class="card bg-purple shadow-lg rounded-lg overflow-hidden mb-6">
+                    <!-- Image -->
+                    <div class="card-image mb-2">
+                        {% if movie.poster_path %}
+                            <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-64 object-cover">
+                        {% else %}
+                            <img src="{% static 'images/default-image.jpg' %}" alt="No Image Available" class="w-full h-64 object-cover">
+                        {% endif %}
+                    </div>
+                    <!-- Movie Title + Description -->
+                    <div class="p-4">
+                        <p class="card-title text-xl font-semibold">{{ movie.title }}</p>
+                        <p class="card-description text-gray-600">
+                            Genres: 
+                            {% for genre in movie.genres.all %}
+                                {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <!-- Show More Button -->
+                    <div class="p-4">
+                        <button class="card-button hover:underline"
+                            onclick="window.location.href='{% url 'IMBD_app:movie_details' pk=movie.pk %}'">Show More
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-600">No local movies found.</p>
+        {% endif %}
+    </section>
 
-<br><br>
-
-<!-- TMDB Movies -->
-<h3>TMDB Movies</h3>
-<ul>
-    {% for movie in movies_tmdb %}
-        <div>
-            <h4><a href="{% url 'IMBD_app:movie_details' pk=movie.tmdb_id %}">{{ movie.title }}</a></h4>
-            <p>Genres: {% for genre in movie.genres.all %}{{ genre.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-        </div>
-    {% empty %}
-        <p>No TMDB movies found.</p>
-    {% endfor %}
-</ul>
-
+    <!-- TMDB Movies Section -->
+    <section class="category mb-10">
+        <h3 class="text-2xl font-bold mb-4">TMDB Movies</h3>
+        {% if movies_tmdb %}
+            <div class="grid grid-cols-3 gap-6">
+                {% for movie in movies_tmdb %}
+                <div class="card bg-purple shadow-lg rounded-lg overflow-hidden mb-6">
+                    <!-- Image -->
+                    <div class="card-image mb-2">
+                        {% if movie.poster_path %}
+                            <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-64 object-cover">
+                        {% else %}
+                            <img src="{% static 'images/default-image.jpg' %}" alt="No Image Available" class="w-full h-64 object-cover">
+                        {% endif %}
+                    </div>
+                    <!-- Movie Title + Description -->
+                    <div class="p-4">
+                        <p class="card-title text-xl font-semibold">{{ movie.title }}</p>
+                        <p class="card-description text-gray-600">Release Date: {{ movie.release_date }}</p>
+                    </div>
+                    <!-- Show More Button -->
+                    <div class="p-4">
+                        <button class="card-button hover:underline"
+                            onclick="window.location.href='https://www.themoviedb.org/movie/{{ movie.id }}'">Show More
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-600">No TMDB movies found.</p>
+        {% endif %}
+    </section>
+</div>
 {% endblock %}

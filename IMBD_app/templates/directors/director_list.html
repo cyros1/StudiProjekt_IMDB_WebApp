@@ -25,7 +25,7 @@
 <ul>
     {% for director in directors_tmdb %}
         <div>
-            <h4><a href="{% url 'IMBD_app:director_details' pk=director.tmdb_id %}">{{ director.name }}</a></h4>
+            <h4><a href="/directors/{{ director.id }}">{{ director.name }}</a></h4>
         </div>
     {% empty %}
         <p>No TMDB directors found.</p>

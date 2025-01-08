@@ -472,9 +472,15 @@ def movie_list(request):
                 # Check if the movie exists in the local database by TMDB ID
                 movie_exists = Movie.objects.filter(tmdb_id=tmdb_movie["id"]).exists()
                 if not movie_exists:
-                    # Save the movie from TMDB to the database if not already present
-                    movie = fetch_movie_from_tmdb(tmdb_movie["id"])  # This saves the movie in DB
-                    movies_tmdb.append(movie)
+                    # Append movie data to movies_tmdb instead of saving to DB
+                    movies_tmdb.append({
+                        "id": tmdb_movie["id"],
+                        "title": tmdb_movie.get("title"),
+                        "overview": tmdb_movie.get("overview"),
+                        "release_date": tmdb_movie.get("release_date"),
+                        "poster_path": tmdb_movie.get("poster_path"),
+                        # Add any other fields needed for display
+                    })
 
         elif category == "genre":
             # Filter genres by name and fetch related movies
@@ -484,13 +490,20 @@ def movie_list(request):
             # Fetch TMDB movies based on the query (genre)
             tmdb_response = fetch_tmdb_data("search/movie", params={"query": query, "language": "en-US", "page": 1})
             tmdb_movies = tmdb_response.get("results", [])
+
             for tmdb_movie in tmdb_movies:
                 # Check if the movie exists in the local database by TMDB ID
                 movie_exists = Movie.objects.filter(tmdb_id=tmdb_movie["id"]).exists()
                 if not movie_exists:
-                    # Save the movie from TMDB to the database if not already present
-                    movie = fetch_movie_from_tmdb(tmdb_movie["id"])  # This saves the movie in DB
-                    movies_tmdb.append(movie)
+                    # Append movie data to movies_tmdb instead of saving to DB
+                    movies_tmdb.append({
+                        "id": tmdb_movie["id"],
+                        "title": tmdb_movie.get("title"),
+                        "overview": tmdb_movie.get("overview"),
+                        "release_date": tmdb_movie.get("release_date"),
+                        "poster_path": tmdb_movie.get("poster_path"),
+                        # Add any other fields needed for display
+                    })
 
     context = {
         "query": query,
@@ -525,9 +538,20 @@ def director_list(request):
                 # Check if the director exists in the local database by TMDB ID
                 director_exists = Director.objects.filter(tmdb_id=tmdb_director["id"]).exists()
                 if not director_exists:
-                    # Save the director from TMDB to the database if not already present
-                    director = fetch_director_from_tmdb(tmdb_director["id"])  # This saves the director in DB
-                    directors_tmdb.append(director)
+                    # Append director data to directors_tmdb instead of saving to DB
+                    directors_tmdb.append({
+                        "id": tmdb_director["id"],
+                        "name": tmdb_director.get("name"),
+                        "known_for": [
+                            {
+                                "title": item.get("title") or item.get("name"),
+                                "media_type": item.get("media_type"),
+                            }
+                            for item in tmdb_director.get("known_for", [])
+                        ],
+                        "profile_path": tmdb_director.get("profile_path"),
+                        # Add other fields needed for display
+                    })
 
     context = {
         "query": query,
@@ -562,9 +586,20 @@ def actor_list(request):
                 # Check if the actor exists in the local database by TMDB ID
                 actor_exists = Actor.objects.filter(tmdb_id=tmdb_actor["id"]).exists()
                 if not actor_exists:
-                    # Save the actor from TMDB to the database if not already present
-                    actor = fetch_actor_from_tmdb(tmdb_actor["id"])  # This saves the actor in DB
-                    actors_tmdb.append(actor)
+                    # Append director data to directors_tmdb instead of saving to DB
+                    actors_tmdb.append({
+                        "id": tmdb_actor["id"],
+                        "name": tmdb_actor.get("name"),
+                        "known_for": [
+                            {
+                                "title": item.get("title") or item.get("name"),
+                                "media_type": item.get("media_type"),
+                            }
+                            for item in tmdb_actor.get("known_for", [])
+                        ],
+                        "profile_path": tmdb_actor.get("profile_path"),
+                        # Add other fields needed for display
+                    })
 
     context = {
         "query": query,
