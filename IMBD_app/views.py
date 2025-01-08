@@ -535,7 +535,10 @@ def director_list(request):
 
             # Fetch TMDB directors if not found in DB
             tmdb_response = fetch_tmdb_data("search/person", params={"query": query, "language": "en-US"})
-            tmdb_directors = tmdb_response.get("results", [])
+            tmdb_directors = [
+                person for person in tmdb_response.get("results", [])
+                if person.get("known_for_department") == "Directing"
+            ]
 
             for tmdb_director in tmdb_directors:
                 # Check if the director exists in the local database by TMDB ID
@@ -583,7 +586,10 @@ def actor_list(request):
 
             # Fetch TMDB actors if not found in DB
             tmdb_response = fetch_tmdb_data("search/person", params={"query": query, "language": "en-US"})
-            tmdb_actors = tmdb_response.get("results", [])
+            tmdb_actors = [
+                person for person in tmdb_response.get("results", [])
+                if person.get("known_for_department") == "Acting"
+            ]
 
             for tmdb_actor in tmdb_actors:
                 # Check if the actor exists in the local database by TMDB ID
