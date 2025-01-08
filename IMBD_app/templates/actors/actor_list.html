@@ -2,34 +2,72 @@
 {% load static %}
 
 {% block main %}
-<br><br><br><br>
-<h1>Actor List</h1>
-<h2>Search Results for "{{ query }}" in {{ category|title }}</h2>
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Actor List</h1>
+    <h2 class="text-2xl font-semibold mb-4">Search Results for "{{ query }}" in {{ category|title }}</h2>
 
-<!-- Local Actors -->
-<h3>Local Actors</h3>
-<ul>
-    {% for actor in actors_db %}
-        <div>
-            <h4><a href="{% url 'IMBD_app:actor_details' pk=actor.tmdb_id %}">{{ actor.name }}</a></h4>
+    <!-- Local Actors -->
+    <section class="category mb-10">
+        <h2 class="text-2xl font-bold mb-4">Local Actors</h2>
+        <!-- Grid for 3 columns -->
+        <div class="grid grid-cols-3 gap-6">
+            {% for actor in actors_db %}
+            <div class="card bg-purple shadow-lg rounded-lg overflow-hidden mb-6">
+                <!-- Image with fallback in case profile_path is empty -->
+                <div class="card-image mb-2">
+                    {% if actor.profile_path %}
+                        <img src="https://image.tmdb.org/t/p/w500{{ actor.profile_path }}" alt="{{ actor.name }}" class="w-full h-64 object-cover">
+                    {% else %}
+                        <img src="{% static 'images/default-image.jpg' %}" alt="No Image Available" class="w-full h-64 object-cover">
+                    {% endif %}
+                </div>
+                <!-- Actor Name + Description -->
+                <div class="p-4">
+                    <p class="card-title text-xl font-semibold">{{ actor.name }}</p>
+                    <p class="card-description text-gray-600">{{ actor.vote_average }}</p>
+                </div>
+                <!-- Button to Actor Details -->
+                <button class="card-button hover:underline"
+                onclick="window.location.href='/actors/{{ actor.id }}'">Show More
+                </button>
+            </div>
+            {% empty %}
+                <p>No local actors found.</p>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p>No local actors found.</p>
-    {% endfor %}
-</ul>
+    </section>
 
-<br><br>
-
-<!-- TMDB Actors -->
-<h3>TMDB Actors</h3>
-<ul>
-    {% for actor in actors_tmdb %}
-        <div>
-            <h4><a href="/actors/{{ director.id }}">{{ actor.name }}</a></h4>
+    <!-- TMDB Actors -->
+    <section class="category mb-10">
+        <h2 class="text-2xl font-bold mb-4">TMDB Actors</h2>
+        <!-- Grid for 3 columns -->
+        <div class="grid grid-cols-3 gap-6">
+            {% for actor in actors_tmdb %}
+            <div class="card bg-purple shadow-lg rounded-lg overflow-hidden mb-6">
+                <!-- Image with fallback in case profile_path is empty -->
+                <div class="card-image mb-2">
+                    {% if actor.profile_path %}
+                        <img src="https://image.tmdb.org/t/p/w500{{ actor.profile_path }}" alt="{{ actor.name }}" class="w-full h-64 object-cover">
+                    {% else %}
+                        <img src="{% static 'images/default-image.jpg' %}" alt="No Image Available" class="w-full h-64 object-cover">
+                    {% endif %}
+                </div>
+                <!-- Actor Name + Description -->
+                <div class="p-4">
+                    <div class="p-4">
+                        <p class="card-title text-xl font-semibold">{{ actor.name }}</p>
+                        <p class="card-description text-gray-600">{{ actor.popularity }}</p>
+                    </div>
+                </div>
+                <!-- Button to Actor Details -->
+                <button class="card-button hover:underline"
+                    onclick="window.location.href='/actors/{{ actor.id }}'">Show More
+                </button>
+            </div>
+            {% empty %}
+                <p>No TMDB actors found.</p>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p>No TMDB actors found.</p>
-    {% endfor %}
-</ul>
-
+    </section>
+</div>
 {% endblock %}
