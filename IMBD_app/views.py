@@ -33,7 +33,9 @@ def home(request):
     # TMDB only provides endpoint for persons, the specifics (actor/director) have to be filtered out from the json
     top_people = fetch_tmdb_data("person/popular", params={"language": "en-US", "page": 1})
 
-    custom_actors = Actor.objects.filter(custom_id__isnull=False) 
+    custom_actors = Actor.objects.filter(custom_id__isnull=False)
+    custom_movies = Movie.objects.filter(custom_id__isnull=False)
+    custom_directors = Director.objects.filter(custom_id__isnull=False)
 
     top_actors = [
         person for person in top_people.get("results", [])
@@ -50,6 +52,8 @@ def home(request):
         "top_actors": top_actors,
         "top_directors" : top_directors,
         "custom_actors": custom_actors,  # Pass custom actors to the template
+        "custom_movies": custom_movies,
+        "custom_directors": custom_directors,
     })
 
 # Function to fetch movie credits (cast and crew)
