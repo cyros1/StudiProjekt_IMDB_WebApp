@@ -1,6 +1,20 @@
 {% extends 'base.html' %} 
 
 {% block title %} Login {% endblock %}
+
+
+
+<script>
+    if (window.performance && performance.navigation.type === 1) {
+        // Wenn die Seite per Reload aufgerufen wird, tue nichts
+    } else {
+        // Automatischer Reload, wenn die Seite das erste Mal geladen wird
+        window.location.reload();
+    }
+</script>
+
+
+
     
 {% block main%}
 <div class="flex justify-center items-center min-h-screen bg-purple-200">
@@ -32,5 +46,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('reload') === 'true') {
+        window.location.href = window.location.pathname;  // Entfernt den Query-Parameter und lädt die Seite neu
+    }
+</script>
+
+
 
 {% endblock main%}
