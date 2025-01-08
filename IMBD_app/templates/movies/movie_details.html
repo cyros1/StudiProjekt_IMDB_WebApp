@@ -83,12 +83,13 @@
 
             </ul>
 
-            <form action"{% url 'IMBD_app:delete_movie' movie.id %} " method="post">
+            <form action="{% url 'IMBD_app:delete_movie' movie.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                Film Löschen
+                    Film Löschen
                 </button>
             </form>
+            
             
         </div>
 

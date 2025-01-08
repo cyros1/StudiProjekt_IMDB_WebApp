@@ -534,7 +534,7 @@ def director_list(request):
             directors_db = Director.objects.filter(Q(name__icontains=query))
 
             # Fetch TMDB directors if not found in DB
-            tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
+            tmdb_response = fetch_tmdb_data("search/person", params={"query": query, "language": "en-US"})
             tmdb_directors = tmdb_response.get("results", [])
 
             for tmdb_director in tmdb_directors:
@@ -582,7 +582,7 @@ def actor_list(request):
             actors_db = Actor.objects.filter(Q(name__icontains=query))
 
             # Fetch TMDB actors if not found in DB
-            tmdb_response = fetch_tmdb_data("search/person", params={"query": query})
+            tmdb_response = fetch_tmdb_data("search/person", params={"query": query, "language": "en-US"})
             tmdb_actors = tmdb_response.get("results", [])
 
             for tmdb_actor in tmdb_actors:
@@ -662,9 +662,9 @@ def watchlist_view(request):
 def delete_movie(request, pk):
     if request.method == "POST":
         movie = get_object_or_404(Movie, id=pk)
-        movie.delete(movie)
+        movie.delete()
         messages.success(request, "Removed Movie")
-        return redirect('home')
+        return redirect('IMBD_app:home')
     else:
         messages.error(request, "Invalid request")
-        return redirect('home')
+        return redirect('IMBD_app:home')
