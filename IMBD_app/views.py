@@ -12,12 +12,10 @@ from django.contrib.auth.models import User
 from django.db.models import Avg
 from .forms import UserCommentForm, UserRatingForm
 from .models import Movie, Watchlist
-<<<<<<< HEAD
 from django.urls import reverse
 import random, string
-=======
 from django.views.decorators.cache import cache_control
->>>>>>> 9ade41cfbe5e88136e63da4cdeeea6fa31900bb0
+
 # Create your views here.
 
 from django.shortcuts import render
