@@ -33,7 +33,9 @@ def home(request):
     # TMDB only provides endpoint for persons, the specifics (actor/director) have to be filtered out from the json
     top_people = fetch_tmdb_data("person/popular", params={"language": "en-US", "page": 1})
 
-    custom_actors = Actor.objects.filter(custom_id__isnull=False) 
+    custom_actors = Actor.objects.filter(custom_id__isnull=False)
+    custom_movies = Movie.objects.filter(custom_id__isnull=False)
+    custom_directors = Director.objects.filter(custom_id__isnull=False)
 
     top_actors = [
         person for person in top_people.get("results", [])
@@ -50,6 +52,8 @@ def home(request):
         "top_actors": top_actors,
         "top_directors" : top_directors,
         "custom_actors": custom_actors,  # Pass custom actors to the template
+        "custom_movies": custom_movies,
+        "custom_directors": custom_directors,
     })
 
 # Function to fetch movie credits (cast and crew)
@@ -512,7 +516,10 @@ def director_list(request):
 
             # Fetch TMDB directors if not found in DB
             tmdb_response = fetch_tmdb_data("search/person", params={"query": query, "language": "en-US"})
-            tmdb_directors = tmdb_response.get("results", [])
+            tmdb_directors = [
+                person for person in tmdb_response.get("results", [])
+                if person.get("known_for_department") == "Directing"
+            ]
 
             for tmdb_director in tmdb_directors:
                 # Check if the director exists in the local database by TMDB ID
@@ -560,7 +567,10 @@ def actor_list(request):
 
             # Fetch TMDB actors if not found in DB
             tmdb_response = fetch_tmdb_data("search/person", params={"query": query, "language": "en-US"})
-            tmdb_actors = tmdb_response.get("results", [])
+            tmdb_actors = [
+                person for person in tmdb_response.get("results", [])
+                if person.get("known_for_department") == "Acting"
+            ]
 
             for tmdb_actor in tmdb_actors:
                 # Check if the actor exists in the local database by TMDB ID

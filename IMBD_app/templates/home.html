@@ -79,8 +79,8 @@
             </div>
         </section>
 
-         <!-- Custom Actors Section -->
-         <section class="category mb-10">
+        <!-- Custom Actors Section -->
+        <section class="category mb-10">
             <h2 class="text-2xl font-bold mb-4">Custom Created Actors</h2>
             <div class="cards">
                 {% for actor in custom_actors %}
@@ -97,6 +97,51 @@
                     <!-- Button to Actor Details -->
                     <button class="card-button hover:underline"
                         onclick="window.location.href='/actors/{{ actor.custom_id }}'">Show More</button>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Custom Directors Section -->
+        <section class="category mb-10">
+            <h2 class="text-2xl font-bold mb-4">Custom Created Directors</h2>
+            <div class="cards">
+                {% for director in custom_directors %}
+                <div class="card">
+                    <!-- Image -->
+                    <div class="card-image mb-2">
+                        <img src="{{ director.get_profile_picture }}" alt="{{ director.name }}">
+                    </div>
+                    <!-- Director Name + Biography -->
+                    <div>
+                        <p class="card-title">{{ director.name }}</p>
+                    </div>
+                    <!-- Button to Director Details -->
+                    <button class="card-button hover:underline"
+                        onclick="window.location.href='/directors/{{ director.custom_id }}'">Show More</button>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Custom Movies Section -->
+        <section class="category mb-10">
+            <h2 class="text-2xl font-bold mb-4">Custom Created Movies</h2>
+            <div class="cards">
+                {% for movie in custom_movies %}
+                <div class="card">
+                    <!-- Image -->
+                    <div class="card-image mb-2">
+                        <img src="{{ actor.get_profile_picture }}" alt="{{ actor.name }}">
+                    </div>
+                    <!-- Actor Name + Biography -->
+                    <div>
+                        <p class="card-title">{{ movie.title }}</p>
+                        <p class="card-description">{{ movie.rating }}</p>
+                    </div>
+                    <!-- Button to Actor Details -->
+                    <button class="card-button hover:underline"
+                        onclick="window.location.href='/movies/{{ movie.custom_id }}'">Show More</button>
                 </div>
                 {% endfor %}
             </div>
