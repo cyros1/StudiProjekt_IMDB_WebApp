@@ -41,6 +41,8 @@ urlpatterns = [
     path('all_movies/', views.all_movies, name='all_movies'),
     path('recent_movies/', views.recent_movies, name='recent_movies'),
 
+    path('delete-movie/<int:pk>/', views.delete_movie, name='delete_movie'),
+
     #watchlist
     path('movies/<int:pk>/', views.movie_details, name='movie_details'),
     path('watchlist/toggle/<int:pk>/', views.toggle_watchlist, name='toggle_watchlist'),
