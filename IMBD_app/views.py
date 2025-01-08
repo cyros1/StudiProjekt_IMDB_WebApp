@@ -12,8 +12,12 @@ from django.contrib.auth.models import User
 from django.db.models import Avg
 from .forms import UserCommentForm, UserRatingForm
 from .models import Movie, Watchlist
+<<<<<<< HEAD
 from django.urls import reverse
 import random, string
+=======
+from django.views.decorators.cache import cache_control
+>>>>>>> 9ade41cfbe5e88136e63da4cdeeea6fa31900bb0
 # Create your views here.
 
 from django.shortcuts import render
@@ -296,6 +300,7 @@ def director_details(request, pk):
 
 
 # Login Page (renamed to user_login to avoid conflict with built-in login function)
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -332,7 +337,7 @@ def signup(request):
             user = User.objects.create_user(username=username, password=password)
             user.save()
             messages.success(request, "Account created successfully!")
-            return redirect('user_login')  # Redirect to login page after successful signup
+            return redirect('/login?reload=true')  # Redirect to login page after successful signup
     return render(request, 'auth/signup.html')
 
 # Logout
