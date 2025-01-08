@@ -68,26 +68,36 @@ class MovieForm(forms.ModelForm):
             'actors': forms.SelectMultiple(attrs={'class': 'form-field'}),
             'directors': forms.SelectMultiple(attrs={'class': 'form-field'}),
         }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Nur benutzerdefinierte Schauspieler und Regisseure zulassen
+        # Only allow custom actors and directors (no TMDB actors)
         self.fields['actors'].queryset = Actor.objects.filter(tmdb_id__isnull=True)
         self.fields['directors'].queryset = Director.objects.filter(tmdb_id__isnull=True)
 
     def save(self, commit=True):
         movie = super().save(commit=False)
-        
+
         # Handle custom backdrop image
         if self.cleaned_data.get('custom_backdrop_image'):
             movie.backdrop_path = None
             movie.custom_backdrop_image = self.cleaned_data['custom_backdrop_image']
 
-        # Optionally, generate a custom ID for the movie (if applicable)
+        # Ensure movie.tmdb_id is None for custom entries
         if not movie.tmdb_id:
-            movie.tmdb_id = generate_custom_id()  # Replace with actual logic if needed
-        
+            movie.tmdb_id = None  # Set tmdb_id as None for custom movie entries
+
         if commit:
-            movie.save()
+            movie.save()  # Save the movie instance to the database
+
+            # Save actors (many-to-many relationship handling)
+            actors = self.cleaned_data.get('actors')
+            movie.actors.set(actors)  # Set the selected actors (many-to-many field)
+            
+            # Save directors (many-to-many relationship handling)
+            directors = self.cleaned_data.get('directors')
+            movie.directors.set(directors)  # Set the selected directors (many-to-many field)
+
         return movie
 
 

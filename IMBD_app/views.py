@@ -385,56 +385,33 @@ def create(request):
         if form_type == 'actor':
             actor_form = ActorForm(request.POST, request.FILES)
             if actor_form.is_valid():
-                # Save the actor form and generate custom ID
                 actor = actor_form.save(commit=False)
-                actor.custom_id = generate_custom_id()  # Generate custom ID
+                actor.custom_id = generate_custom_id()
                 actor.save()
-                print("Actor created successfully!")  # Debugging-Ausgabe
+                print("Actor created successfully!")
                 messages.success(request, "Actor created successfully!")
-                
-                # Redirect to actor_detail view using the custom ID
-                return redirect('IMBD_app:actor_detail', pk=actor.custom_id)  # Redirect to the custom actor detail page
-            else:
-                print("ERROR: Actor couldn't be created")
-                print(actor_form.errors)
-                messages.error(request, "Error creating actor. Please check the form.")
-        
+                return redirect('IMBD_app:actor_detail', pk=actor.custom_id)
+
         elif form_type == 'director':
             director_form = DirectorForm(request.POST, request.FILES)
             if director_form.is_valid():
-                # Save the director form and generate custom ID if needed
                 director = director_form.save(commit=False)
-                director.custom_id = generate_custom_id()  # Generate custom ID if needed
+                director.custom_id = generate_custom_id()
                 director.save()
-                print("Director created successfully!")  # Debugging-Ausgabe
+                print("Director created successfully!")
                 messages.success(request, "Director created successfully!")
-                
-                # Redirect to director_detail view using the custom ID
-                return redirect('IMBD_app:director_detail', pk=director.custom_id)  # Redirect to the custom director detail page
-            else:
-                print("ERROR: Director couldn't be created")
-                print(director_form.errors)
-                messages.error(request, "Error creating director. Please check the form.")
-        
+                return redirect('IMBD_app:director_detail', pk=director.custom_id)
+
         elif form_type == 'movie':
             movie_form = MovieForm(request.POST, request.FILES)
             if movie_form.is_valid():
-                # Save the movie form and generate custom ID if needed
                 movie = movie_form.save(commit=False)
-                
-                # Only set the custom_id and leave tmdb_id as None
-                movie.custom_id = generate_custom_id()  # Generate custom ID
-                movie.tmdb_id = None  # Ensure tmdb_id is left blank for custom entries
+                movie.custom_id = generate_custom_id()
+                movie.tmdb_id = None  # Set tmdb_id as None for custom entries
                 movie.save()
-                print("Movie created successfully!")  # Debugging-Ausgabe
+                print("Movie created successfully!")
                 messages.success(request, "Movie created successfully!")
-                
-                # Redirect to movie_detail view using the custom ID
-                return redirect('IMBD_app:movie_detail', pk=movie.custom_id)  # Redirect to the custom movie detail page
-            else:
-                print("ERROR: Movie couldn't be created")
-                print(movie_form.errors)
-                messages.error(request, "Error creating movie. Please check the form.")
+                return redirect('IMBD_app:movie_detail', pk=movie.custom_id)
 
     return render(request, 'create.html', {
         'actor_form': actor_form,
@@ -664,6 +641,26 @@ def delete_movie(request, pk):
         movie = get_object_or_404(Movie, id=pk)
         movie.delete()
         messages.success(request, "Removed Movie")
+        return redirect('IMBD_app:home')
+    else:
+        messages.error(request, "Invalid request")
+        return redirect('IMBD_app:home')
+    
+def delete_actor(request, pk):
+    if request.method == "POST":
+        actor = get_object_or_404(Actor, id=pk)
+        actor.delete()
+        messages.success(request, "Removed Actor")
+        return redirect('IMBD_app:home')
+    else:
+        messages.error(request, "Invalid request")
+        return redirect('IMBD_app:home')
+    
+def delete_director(request, pk):
+    if request.method == "POST":
+        director = get_object_or_404(Director, id=pk)
+        director.delete()
+        messages.success(request, "Removed Director")
         return redirect('IMBD_app:home')
     else:
         messages.error(request, "Invalid request")
