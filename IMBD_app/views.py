@@ -53,8 +53,8 @@ def home(request):
     })
 
 # Function to fetch movie credits (cast and crew)
-def fetch_movie_credits(movie_id):
-    return fetch_tmdb_data(f"movie/{movie_id}/credits", params={"language": "en-US"})
+def fetch_movie_credits(pk):
+    return fetch_tmdb_data(f"movie/{pk}/credits", params={"language": "en-US"})
 
 # Details of a specific movie 
 # Details of a specific movie 
@@ -658,3 +658,9 @@ def watchlist_view(request):
         "movie_titles": watchlist,
         "movies": movies,
     })
+
+def delete_movie(request, pk):
+    movie = get_object_or_404(Movie, id=pk)
+    movie.delete()
+    messages.success(request, "Removed Movie")
+    return redirect('home')
