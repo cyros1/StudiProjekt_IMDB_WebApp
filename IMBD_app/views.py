@@ -660,7 +660,11 @@ def watchlist_view(request):
     })
 
 def delete_movie(request, pk):
-    movie = get_object_or_404(Movie, id=pk)
-    movie.delete()
-    messages.success(request, "Removed Movie")
-    return redirect('home')
+    if request.method == "POST":
+        movie = get_object_or_404(Movie, id=pk)
+        movie.delete(movie)
+        messages.success(request, "Removed Movie")
+        return redirect('home')
+    else:
+        messages.error(request, "Invalid request")
+        return redirect('home')
