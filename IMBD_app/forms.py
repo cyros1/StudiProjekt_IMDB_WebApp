@@ -68,6 +68,11 @@ class MovieForm(forms.ModelForm):
             'actors': forms.SelectMultiple(attrs={'class': 'form-field'}),
             'directors': forms.SelectMultiple(attrs={'class': 'form-field'}),
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Nur benutzerdefinierte Schauspieler und Regisseure zulassen
+        self.fields['actors'].queryset = Actor.objects.filter(tmdb_id__isnull=True)
+        self.fields['directors'].queryset = Director.objects.filter(tmdb_id__isnull=True)
 
     def save(self, commit=True):
         movie = super().save(commit=False)
