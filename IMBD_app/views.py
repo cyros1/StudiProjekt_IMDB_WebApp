@@ -1,19 +1,14 @@
-from django.forms import ValidationError
-from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from .models import Genre, Movie, Actor, Director
 from .forms import ActorForm, DirectorForm, MovieForm, UserCommentForm, UserRatingForm
-from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb, fetch_actor_from_tmdb, fetch_director_from_tmdb, generate_custom_id
+from .utils.tmdb import fetch_tmdb_data, fetch_movie_from_tmdb, generate_custom_id
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.models import User 
 from django.db.models import Avg
 from .forms import UserCommentForm, UserRatingForm
 from .models import Movie, Watchlist
-from django.urls import reverse
-import random, string
 from django.views.decorators.cache import cache_control
 
 # Create your views here.
